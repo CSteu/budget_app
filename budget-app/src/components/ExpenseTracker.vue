@@ -13,11 +13,12 @@
           <Column field="date" header="Date"></Column>
           <Column field="description" header="Description"></Column>
           <Column field="category" header="Category"></Column>
-          <Column field="amount" header="Amount" :body="formatCurrency"></Column>
+          <Column field="amount" header="Amount">
+            <template #body="slotProps">
+              {{ `$${slotProps.data.amount.toFixed(2)}` }}
+            </template>
+          </Column>
         </DataTable>
-      </div>
-      <div class="expense-chart-container">
-        <Chart type="pie" :data="chartData" :options="chartOptions" class="expense-chart" />
       </div>
     </div>
   </div>
@@ -26,13 +27,11 @@
 <script>
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import Chart from "primevue/chart";
 
 export default {
   components: {
     DataTable,
     Column,
-    Chart,
   },
   data() {
     return {
@@ -79,8 +78,8 @@ export default {
     },
   },
   methods: {
-    formatCurrency(value) {
-      return `$${value.toFixed(2)}`;
+    formatCurrency(amount) {
+      return `$${amount.toFixed(2)}`;
     },
     updateFilteredExpenses() {
       const now = new Date();
