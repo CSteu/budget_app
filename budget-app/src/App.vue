@@ -16,5 +16,6 @@ export default {
   justify-content: center;
   align-items: center;
   margin: 0;
+  color: #34495e;
 }
 </style>

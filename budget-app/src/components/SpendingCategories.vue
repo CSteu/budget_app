@@ -8,12 +8,12 @@
         <div v-for="(category, index) in state.topCategories" :key="index" class="table-row">
           <span class="dot" :style="category.style"></span>
           <div class="category-wrapper">
-              <div class="row-item category">
-                <h3>{{ category.category }}</h3>
-              </div>
-              <div class="row-item transactions">
-                {{ category.transactionCount }} Transactions
-              </div>
+            <div class="row-item category">
+              <h3>{{ category.category }}</h3>
+            </div>
+            <div class="row-item transactions">
+              {{ category.transactionCount }} Transactions
+            </div>
           </div>
           <div class="row-item total">
             <h3>${{ category.totalSpent.toFixed(2) }}</h3>
@@ -24,8 +24,8 @@
   </template>
   
   <script setup>
-  import { inject, reactive, watch, onMounted } from 'vue';
-  import Chart from 'primevue/chart';
+  import { inject, reactive, watch, onMounted } from "vue";
+  import Chart from "primevue/chart";
   
   const predefinedBlueShades = [
     '#03045e', 
@@ -60,7 +60,8 @@
   });
   
   const calculateTopCategories = () => {
-    const categoryStats = spendingData.expenses.reduce((acc, expense) => {
+    const expenses = Array.isArray(spendingData?.expenses) ? spendingData.expenses : [];
+    const categoryStats = expenses.reduce((acc, expense) => {
       if (!acc[expense.category]) {
         acc[expense.category] = { transactionCount: 0, totalSpent: 0 };
       }
@@ -77,7 +78,6 @@
       .sort((a, b) => b.totalSpent - a.totalSpent)
       .slice(0, 5);
   
-    // Add styles for the dots in the table
     topCategories.forEach((cat, index) => {
       cat.style = `background-color: ${predefinedBlueShades[index] || '#ccc'};`;
     });
@@ -94,7 +94,7 @@
   };
   
   watch(
-    () => spendingData.expenses,
+    () => spendingData?.expenses,
     () => {
       calculateTopCategories();
     },
@@ -126,7 +126,7 @@
     text-align: center;
     margin-bottom: 1.5rem;
   }
-
+  
   h3 {
     font-size: 1.1rem;
     font-weight: 600;
@@ -161,13 +161,14 @@
     align-items: center;
     justify-content: flex-start;
   }
-
+  
   .row-item.transactions {
     font-size: .8rem;
     font-weight: 400;
     color: #555;
     text-align: center;
   }
+  
   .row-item.total {
     justify-content: right;
     display: flex;

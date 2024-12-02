@@ -27,49 +27,26 @@
 <script>
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import { inject } from "vue";
 
 export default {
   components: {
     DataTable,
     Column,
   },
+  inject: ["spendingData"],
   data() {
     return {
       timeFilter: "all",
-      expenses: [
-        { date: "2024-11-19", description: "Groceries", category: "Food", amount: 45.67 },
-        { date: "2024-11-18", description: "Gas", category: "Transport", amount: 25.34 },
-        { date: "2024-11-17", description: "Movie Night", category: "Entertainment", amount: 15.0 },
-        { date: "2024-11-16", description: "Coffee", category: "Food", amount: 5.25 },
-        { date: "2024-11-15", description: "Monthly Rent", category: "Housing", amount: 1200.0 },
-        { date: "2024-11-14", description: "Electricity Bill", category: "Utilities", amount: 85.5 },
-        { date: "2024-11-13", description: "Gym Membership", category: "Health", amount: 40.0 },
-        { date: "2024-11-12", description: "Book Purchase", category: "Education", amount: 30.99 },
-        { date: "2024-11-11", description: "Car Maintenance", category: "Transport", amount: 200.0 },
-        { date: "2024-11-10", description: "Dining Out", category: "Entertainment", amount: 50.75 },
-        { date: "2024-11-09", description: "Internet Bill", category: "Utilities", amount: 60.0 },
-        { date: "2024-11-08", description: "Grocery Shopping", category: "Food", amount: 120.45 },
-        { date: "2024-11-07", description: "Gas", category: "Transport", amount: 30.0 },
-        { date: "2024-11-06", description: "Netflix", category: "Entertainment", amount: 15.99 },
-        { date: "2024-11-05", description: "Pharmacy Purchase", category: "Health", amount: 18.75 },
-        { date: "2024-11-04", description: "Stationery Supplies", category: "Education", amount: 12.5 },
-        { date: "2024-11-03", description: "Clothing Purchase", category: "Shopping", amount: 75.0 },
-        { date: "2024-11-02", description: "Gas", category: "Transport", amount: 35.5 },
-        { date: "2024-11-01", description: "Dinner Date", category: "Entertainment", amount: 85.0 },
-      ],
       filteredExpenses: [],
-      chartData: null,
-      chartOptions: {
-        plugins: {
-          legend: {
-            display: true,
-            position: "bottom",
-          },
-        },
-      },
     };
   },
   computed: {
+    expenses() {
+      return Array.isArray(this.spendingData?.expenses)
+        ? this.spendingData.expenses
+        : [];
+    },
     expenseCategories() {
       return this.filteredExpenses.reduce((acc, expense) => {
         acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
@@ -78,9 +55,6 @@ export default {
     },
   },
   methods: {
-    formatCurrency(amount) {
-      return `$${amount.toFixed(2)}`;
-    },
     updateFilteredExpenses() {
       const now = new Date();
       const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
@@ -98,20 +72,14 @@ export default {
         }
         return true;
       });
-
-      this.updateChartData();
     },
-    updateChartData() {
-      const categories = this.expenseCategories;
-      this.chartData = {
-        labels: Object.keys(categories),
-        datasets: [
-          {
-            data: Object.values(categories),
-            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"],
-          },
-        ],
-      };
+  },
+  watch: {
+    "spendingData.expenses": {
+      handler() {
+        this.updateFilteredExpenses();
+      },
+      deep: true,
     },
   },
   mounted() {
@@ -153,12 +121,10 @@ h1 {
 
 .expense-table-container {
   flex: 1;
-  min-width: 500px;
-}
-
-.expense-chart-container {
-  flex: 1;
-  min-width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 400px;
 }
 
 .expense-table .p-datatable {
@@ -184,10 +150,6 @@ h1 {
   height: 2.5rem; 
 }
 
-.expense-table.fixed-height {
-  min-height: calc(8 * 2.5rem + 4rem);
-}
-
 .p-datatable-wrapper {
   display: flex;
   flex-direction: column;
@@ -199,31 +161,10 @@ h1 {
   overflow: hidden;
 }
 
-.expense-table .p-datatable-wrapper {
-  max-height: 30rem;
-  overflow-y: auto;
-}
-
 .p-paginator {
   flex-shrink: 0;
   margin-top: 1rem;
-}
-
-.expense-chart {
-  max-width: 100%;
-  height: auto;
-}
-
-h2 {
-  font-weight: 500;
-  color: #2c3e50;
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.p-paginator {
-  justify-content: center;
-  gap: 1rem;
+  background-color: #ffffff;
 }
 
 .p-paginator .p-paginator-pages .p-paginator-page {
@@ -234,18 +175,22 @@ h2 {
   padding: 0.5rem 1rem;
   border-radius: 8px;
   background-color: #ecf0f1;
-  color: #2c3e50;
+  color: rgb(0, 162, 199);
   transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 .p-paginator .p-paginator-page.p-highlight {
-  background-color: #75e5df;
+  background-color: rgb(0, 162, 199);
   color: #ffffff;
-  font-weight: bold;
 }
 
 .p-paginator .p-paginator-page:hover {
-  background-color: #9be7e3;
+  background-color: rgb(0, 140, 170);
   color: #ffffff;
+}
+
+.p-datatable-paginator-bottom {
+  border-style: none !important;
 }
 </style>
