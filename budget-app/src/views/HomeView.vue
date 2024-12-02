@@ -13,11 +13,12 @@ provide('spendingData', spendingData);
 <template>
   <main>
     <router-link to="/add-spending">
-      <Button
-        label="Add New Spending"
-        icon="pi pi-plus"
+      <button
         style="background-color: rgb(0, 162, 199); border: none; color: white; font-weight: bold; border-radius: 8px; padding: 0.7rem 1.5rem;"
-      />
+      >
+        <i class="pi pi-plus" style="margin-right: 0.5rem;"></i>
+        Add New Spending
+      </button>
     </router-link>
 
     <div class="wrapper">
