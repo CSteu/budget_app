@@ -27,7 +27,6 @@
 <script>
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import { inject } from "vue";
 
 export default {
   components: {
@@ -180,14 +179,14 @@ h1 {
   font-weight: 500;
 }
 
-.p-paginator .p-paginator-page.p-highlight {
-  background-color: rgb(0, 162, 199);
-  color: #ffffff;
+.p-paginator .p-paginator-page-selected {
+  background-color: rgb(0, 162, 199) !important;
+  color: #ffffff !important;
 }
 
 .p-paginator .p-paginator-page:hover {
-  background-color: rgb(0, 140, 170);
-  color: #ffffff;
+  background-color: #dcdedf !important;
+  color: rgb(0, 162, 199) !important;
 }
 
 .p-datatable-paginator-bottom {

@@ -1,22 +1,29 @@
 <script setup>
-import { provide } from 'vue';
-import { spendingData } from '../store/SpendingData';
+import { provide } from 'vue'
+import { spendingData } from '../store/SpendingData'
 
-import ExpenseTracker from '../components/ExpenseTracker.vue';
-import IncomeExpenseBarChart from '@/components/IncomeExpenseBarChart.vue';
-import SpendingLineChart from '@/components/SpendingLineChart.vue';
-import SpendingCategories from '@/components/SpendingCategories.vue';
+import ExpenseTracker from '../components/ExpenseTracker.vue'
+import IncomeExpenseBarChart from '@/components/IncomeExpenseBarChart.vue'
+import SpendingLineChart from '@/components/SpendingLineChart.vue'
+import SpendingCategories from '@/components/SpendingCategories.vue'
 
-provide('spendingData', spendingData);
+provide('spendingData', spendingData)
 </script>
 
 <template>
   <main>
     <router-link to="/add-spending">
       <button
-        style="background-color: rgb(0, 162, 199); border: none; color: white; font-weight: bold; border-radius: 8px; padding: 0.7rem 1.5rem;"
+        style="
+          background-color: rgb(0, 162, 199);
+          border: none;
+          color: white;
+          font-weight: bold;
+          border-radius: 8px;
+          padding: 0.7rem 1.5rem;
+        "
       >
-        <i class="pi pi-plus" style="margin-right: 0.5rem;"></i>
+        <i class="pi pi-plus" style="margin-right: 0.5rem"></i>
         Add New Spending
       </button>
     </router-link>
@@ -37,8 +44,16 @@ provide('spendingData', spendingData);
   </main>
 </template>
 
-
 <style scoped>
+.header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
 .wrapper {
   display: flex;
   width: 75vw;
@@ -52,5 +67,8 @@ provide('spendingData', spendingData);
 .right-column {
   width: 35%;
 }
-</style>
 
+.add-spending-button {
+  cursor: pointer;
+}
+</style>
