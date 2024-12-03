@@ -12,13 +12,18 @@ provide('spendingData', spendingData);
 
 <template>
   <main>
-    <router-link to="/add-spending">
-      <Button
-        label="Add New Spending"
-        icon="pi pi-plus"
-        style="background-color: rgb(0, 162, 199); border: none; color: white; font-weight: bold; border-radius: 8px; padding: 0.7rem 1.5rem;"
-      />
-    </router-link>
+    <div class="header">
+      <h1>Spending Insights</h1>
+      <router-link to="/add-spending">
+        <button
+          style="background-color: rgb(0, 162, 199); border: none; color: white; font-weight: bold; border-radius: 8px; padding: 0.7rem 1.5rem;"
+          class="add-spending-button"
+        >
+          <i class="pi pi-plus" style="margin-right: 0.5rem;"></i>
+          Add New Spending
+        </button>
+      </router-link>
+    </div>
 
     <div class="wrapper">
       <!-- Left Column -->
@@ -38,6 +43,15 @@ provide('spendingData', spendingData);
 
 
 <style scoped>
+.header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
 .wrapper {
   display: flex;
   width: 75vw;
@@ -50,6 +64,10 @@ provide('spendingData', spendingData);
 
 .right-column {
   width: 35%;
+}
+
+.add-spending-button{
+  cursor: pointer;
 }
 </style>
 

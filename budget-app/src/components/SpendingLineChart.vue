@@ -1,8 +1,9 @@
 <template>
     <div class="card">
       <div class="header">
-        <h4>{{ currentMonth }} Spending</h4>
+        <h4 id="currentMonth">{{ currentMonth }} Spending</h4>
         <h1>{{ formattedTotalSpending }}</h1>
+        <h3>{{ leftToSpend }}</h3>
       </div>
       <Chart type="line" :data="chartData" :options="chartOptions" class="h-chart" />
     </div>
@@ -17,6 +18,7 @@
   const chartData = ref();
   const chartOptions = ref();
   const currentMonth = ref("");
+  const leftToSpend = ref("$999.99");
   
   const expenses = computed(() =>
     Array.isArray(spendingData?.expenses) ? spendingData.expenses : []
@@ -128,10 +130,10 @@
   });
   </script>
   
-  <style>
+  <style scoped>
   .card {
     width: 100%;
-    margin: 2rem auto;
+    margin: 1rem auto;
     background-color: #ffffff;
     padding: 2rem;
     border-radius: 16px;
@@ -145,16 +147,15 @@
   
   .header h1 {
     font-size: 2rem;
-    color: #03045e;
   }
-  
-  .header h4 {
-    color: #03045e;
+
+  #currentMonth.header.h4 {
+    color: black ;
   }
-  
+
   .h-chart {
     height: 20rem;
-    width: 100%;
+    width: 90%;
   }
   </style>
   

@@ -109,7 +109,7 @@
   <style>
   .top-categories {
     max-width: 600px;
-    margin: 2rem auto;
+    margin: 1rem auto;
     padding: 2rem;
     background-color: #ffffff;
     border-radius: 12px;
@@ -166,7 +166,7 @@
     font-size: .8rem;
     font-weight: 400;
     color: #555;
-    text-align: center;
+    text-align: left;
   }
   
   .row-item.total {
