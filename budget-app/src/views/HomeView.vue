@@ -12,21 +12,24 @@ provide('spendingData', spendingData)
 
 <template>
   <main>
-    <router-link to="/add-spending">
-      <button
-        style="
-          background-color: rgb(0, 162, 199);
-          border: none;
-          color: white;
-          font-weight: bold;
-          border-radius: 8px;
-          padding: 0.7rem 1.5rem;
-        "
-      >
-        <i class="pi pi-plus" style="margin-right: 0.5rem"></i>
-        Add New Spending
-      </button>
-    </router-link>
+    <div class="header">
+      <h1>Spending Insights</h1>
+      <router-link to="/add-spending">
+        <button
+          style="
+            background-color: rgb(0, 162, 199);
+            border: none;
+            color: white;
+            font-weight: bold;
+            border-radius: 8px;
+            padding: 0.7rem 1.5rem;
+          "
+        >
+          <i class="pi pi-plus" style="margin-right: 0.5rem"></i>
+          Add New Spending
+        </button>
+      </router-link>
+    </div>
 
     <div class="wrapper">
       <!-- Left Column -->
@@ -51,7 +54,7 @@ provide('spendingData', spendingData)
   flex-wrap: nowrap;
   flex-direction: row;
   align-items: center;
-  margin-top: 0.5rem;
+  margin: auto 1rem;
 }
 
 .wrapper {

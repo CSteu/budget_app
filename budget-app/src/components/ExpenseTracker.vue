@@ -192,4 +192,8 @@ h1 {
 .p-datatable-paginator-bottom {
   border-style: none !important;
 }
+
+.p-datatable-table-container {
+  min-height: 26rem;
+}
 </style>
