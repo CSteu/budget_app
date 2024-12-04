@@ -1,13 +1,15 @@
 <script setup>
 import { provide } from 'vue'
-import { spendingData } from '../store/SpendingData'
+import { spendingData, incomeData } from '../store/TransactionData'
 
 import ExpenseTracker from '../components/ExpenseTracker.vue'
 import IncomeExpenseBarChart from '@/components/IncomeExpenseBarChart.vue'
 import SpendingLineChart from '@/components/SpendingLineChart.vue'
 import SpendingCategories from '@/components/SpendingCategories.vue'
+import RecurrentSpending from '@/components/RecurrentSpending.vue'
 
 provide('spendingData', spendingData)
+provide('incomeData', incomeData)
 </script>
 
 <template>
@@ -26,7 +28,7 @@ provide('spendingData', spendingData)
           "
         >
           <i class="pi pi-plus" style="margin-right: 0.5rem"></i>
-          Add New Spending
+          Add New Transaction
         </button>
       </router-link>
     </div>
@@ -42,6 +44,7 @@ provide('spendingData', spendingData)
       <!-- Right Column -->
       <div class="right-column">
         <SpendingCategories />
+        <RecurrentSpending />
       </div>
     </div>
   </main>

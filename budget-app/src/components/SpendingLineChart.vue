@@ -161,11 +161,13 @@ onMounted(() => {
 
 .header h1 {
   font-size: 2rem;
+  margin: 0;
 }
 
 .header h3 {
   color: #9b9b9b;
   font-size: 1rem;
+  margin-bottom: .5rem;
 }
 
 .header h4 {
