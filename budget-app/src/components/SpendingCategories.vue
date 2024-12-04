@@ -1,6 +1,6 @@
 <template>
     <div class="top-categories">
-      <h2>Top 5 Categories</h2>
+      <h2>Spending Categories</h2>
       <div class="chart-container">
         <Chart type="pie" :data="chartData" :options="chartOptions" class="w-full md:w-[30rem]" />
       </div>

@@ -1,6 +1,6 @@
 <template>
   <div class="expense-tracker">
-    <h1>Expense Tracker</h1>
+    <h2>Expense Tracker</h2>
     <div class="content">
       <div class="expense-table-container">
         <DataTable
@@ -10,12 +10,16 @@
           responsiveLayout="scroll"
           class="expense-table"
         >
-          <Column field="date" header="Date"></Column>
+        <Column field="date" header="Date">
+            <template #body="slotProps">
+              <span class="date-cell">{{ slotProps.data.date }}</span>
+            </template>
+          </Column>
           <Column field="description" header="Description"></Column>
           <Column field="category" header="Category"></Column>
           <Column field="amount" header="Amount">
             <template #body="slotProps">
-              {{ `$${slotProps.data.amount.toFixed(2)}` }}
+              <span class="amount-cell">{{ `$${slotProps.data.amount.toFixed(2)}` }}</span>
             </template>
           </Column>
         </DataTable>
@@ -135,10 +139,10 @@ h1 {
 }
 
 .expense-table .p-datatable-thead > tr > th {
-  background-color: #ecf0f1;
-  color: #2c3e50;
+  color: var(--vt-c-text-dark-2);
   font-weight: 600;
   text-align: left;
+  font-size: .9rem;
 }
 
 .expense-table .p-datatable-tbody > tr > td {
@@ -195,5 +199,14 @@ h1 {
 
 .p-datatable-table-container {
   min-height: 26rem;
+}
+
+.date-cell {
+  color: var(--vt-c-text-dark-2);
+}
+
+.amount-cell {
+  display: block;
+  text-align: right;
 }
 </style>
