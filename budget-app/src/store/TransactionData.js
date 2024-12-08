@@ -15,5 +15,5 @@ const loadIncomeFromLocalStorage = () => {
 }
 
 export const incomeData = reactive({
-  expenses: loadIncomeFromLocalStorage(),
+  incomes: loadIncomeFromLocalStorage(),
 })

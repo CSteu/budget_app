@@ -8,7 +8,9 @@
       </div>
       <button @click="goToEditBudget" class="edit-budget-btn">Edit spending target</button>
     </div>
-    <Chart type="line" :data="chartData" :options="chartOptions" class="h-chart" />
+    <div class="body">
+      <Chart type="line" :data="chartData" :options="chartOptions" class="h-chart" />
+    </div>
   </div>
 </template>
 
@@ -148,6 +150,12 @@ onMounted(() => {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
+.body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -194,6 +202,6 @@ onMounted(() => {
 
 .h-chart {
   height: 20rem;
-  width: 90%;
+  width: 95%;
 }
 </style>

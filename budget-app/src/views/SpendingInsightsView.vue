@@ -38,8 +38,8 @@ provide('incomeData', incomeData)
       <div class="left-column">
         <!-- Include the components you want in the left column -->
         <SpendingLineChart />
-        <ExpenseTracker />
         <IncomeExpenseBarChart />
+        <ExpenseTracker />
       </div>
       <!-- Right Column -->
       <div class="right-column">

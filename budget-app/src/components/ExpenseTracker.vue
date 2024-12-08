@@ -55,7 +55,6 @@ export default {
         : [];
     },
     transactions() {
-      // Combine income and spending, ensuring spending amounts are negative
       const negativeExpenses = this.expenses.map((expense) => ({
         ...expense,
         amount: -Math.abs(expense.amount),
@@ -66,8 +65,8 @@ export default {
   methods: {
     updateFilteredTransactions() {
       const now = new Date();
-      const startOfDecember = new Date(now.getFullYear(), 11, 1); // December starts at month index 11
-      const endOfDecember = new Date(now.getFullYear(), 11, 31, 23, 59, 59); // Last second of December 31st
+      const startOfDecember = new Date(now.getFullYear(), 11, 1);
+      const endOfDecember = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
 
       this.filteredTransactions = this.transactions.filter((transaction) => {
         const transactionDate = new Date(transaction.date);
