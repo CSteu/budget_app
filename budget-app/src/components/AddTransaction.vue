@@ -1,16 +1,24 @@
 <template>
   <div class="add-transaction-page">
+    <div class="backBtn">
+      <button class="back-button pi pi-arrow-left" @click="goBack"> Cancel</button>
+    </div>
     <div class="header">
-      <button class="back-button" @click="goBack">← Back</button>
       <h1>Add Transaction</h1>
     </div>
 
+    <p class="instructions">
+      Record a new transaction by selecting whether it's an income or a spending transaction. 
+      Then, fill out the necessary details in the form below.
+    </p>
+
     <div class="toggle-switch">
+      <span class="toggle-label">Income</span>
       <label class="switch">
         <input type="checkbox" v-model="isSpending" />
         <span class="slider"></span>
       </label>
-      <span class="toggle-label">{{ isSpending ? "Spending" : "Income" }}</span>
+      <span class="toggle-label">Spending</span>
     </div>
 
     <div>
@@ -52,6 +60,7 @@ const goBack = () => {
 .header {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
   margin-bottom: 1rem;
 }
@@ -61,16 +70,28 @@ const goBack = () => {
   color: rgb(0, 162, 199);
 }
 
+.backBtn {
+  display: flex;
+  justify-content: start;
+}
+
 .back-button {
   background: none;
   border: none;
-  color: rgb(0, 162, 199);
-  font-size: 1.2rem;
+  color: rgb(90, 90, 90);
+  font-size: 1.5rem;
+  font-weight: 700;
   cursor: pointer;
 }
 
 .back-button:hover {
-  text-decoration: underline;
+  color: rgb(64, 64, 64);
+}
+
+.instructions {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1.5rem;
 }
 
 .toggle-switch {

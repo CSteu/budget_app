@@ -7,8 +7,9 @@
         type="date"
         v-model="transaction.date"
         required
-        style="background-color: white; color: black; border: 1px solid rgb(0, 162, 199); border-radius: 8px; padding: 0.5rem; width: 100%;"
+        class="input-field"
       />
+      <small class="field-info">Select the date of the transaction.</small>
     </div>
 
     <div class="form-field">
@@ -17,8 +18,21 @@
         id="description"
         v-model="transaction.description"
         required
-        style="background-color: white; color: black; border: 1px solid rgb(0, 162, 199); border-radius: 8px; padding: 0.5rem; width: 100%;"
+        class="input-field"
+        placeholder="Enter a brief description (e.g., Salary, Freelance Work)"
       />
+      <small class="field-info">Provide a brief description of the transaction.</small>
+    </div>
+
+    <div class="form-field">
+      <label for="category">Category</label>
+      <input
+        id="category"
+        v-model="transaction.category"
+        readonly
+        class="input-field input-disabled"
+      />
+      <small class="field-info">This field is fixed as "Income".</small>
     </div>
 
     <div class="form-field">
@@ -30,8 +44,9 @@
         currency="USD"
         locale="en-US"
         required
-        style="background-color: white; color: black; border: 1px solid rgb(0, 162, 199); border-radius: 8px; padding: 0.5rem; width: 100%;"
+        class="input-field"
       />
+      <small class="field-info">Enter the amount of income for this transaction.</small>
     </div>
 
     <div class="form-actions">
@@ -41,17 +56,25 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from "vue";
+import { ref, defineEmits, onMounted } from "vue";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
 
 const emits = defineEmits(["submitted"]);
 
+const getTodayDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const transaction = ref({
-  date: null,
+  date: getTodayDate(),
   description: "",
   amount: null,
-  category: "Income", // Automatically set to "Income"
+  category: "Income", 
 });
 
 const addNewIncome = () => {
@@ -64,21 +87,64 @@ const addNewIncome = () => {
 
 const resetForm = () => {
   transaction.value = {
-    date: null,
+    date: getTodayDate(),
     description: "",
     amount: null,
     category: "Income",
   };
 };
+
+onMounted(() => {
+  transaction.value.date = getTodayDate();
+});
 </script>
 
 <style scoped>
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .form-field {
-  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: rgb(0, 162, 199);
+  margin-bottom: 0.5rem;
+}
+
+.input-field {
+  background-color: white; 
+  color: black; 
+  border: 1px solid rgb(0, 162, 199); 
+  border-radius: 8px; 
+  padding: 0.5rem; 
+  width: 100%;
+}
+
+.input-disabled {
+  background-color: #e0e0e0;
+  color: #666;
+  font-size: 1.2rem;
+  cursor: not-allowed;
+  padding: 0.5rem;
+}
+
+.field-info {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.5rem;
 }
 
 .form-actions {
-  text-align: right;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .submit-button {
@@ -89,6 +155,7 @@ const resetForm = () => {
   border-radius: 8px;
   padding: 0.7rem 1.5rem;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .submit-button:hover {

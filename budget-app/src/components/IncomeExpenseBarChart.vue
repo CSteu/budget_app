@@ -92,7 +92,7 @@ export default {
     },
     setChartData() {
       const groupedData = this.groupDataByMonth();
-      const labels = Object.keys(groupedData).map(date => this.getMonthAbbreviation(date)); // Use month abbreviations
+      const labels = Object.keys(groupedData).map(date => this.getMonthAbbreviation(date));
       const incomeData = Object.keys(groupedData).map((label) => groupedData[label].income);
       const expenseData = Object.keys(groupedData).map((label) => groupedData[label].expense);
 

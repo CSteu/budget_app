@@ -1,7 +1,7 @@
 <template>
     <div class="edit-budget-page">
+      <button class="back-button pi pi-arrow-left" @click="goBack"> Cancel</button>
       <div class="header">
-        <button class="back-button" @click="goBack">← Back</button>
         <h1>Edit Your Monthly Spending Target</h1>
       </div>
   
@@ -97,6 +97,7 @@
   .header {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 1rem;
     margin-bottom: 1rem;
   }
@@ -109,13 +110,15 @@
   .back-button {
     background: none;
     border: none;
-    color: rgb(0, 162, 199);
-    font-size: 1.2rem;
+    color: rgb(90, 90, 90);
+    font-size: 1.5rem;
+    font-weight: 700;
     cursor: pointer;
+    margin-bottom: 1rem;
   }
   
   .back-button:hover {
-    text-decoration: underline;
+    color: rgb(64, 64, 64);
   }
   
   .instructions {

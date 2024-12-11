@@ -7,15 +7,9 @@
         type="date"
         v-model="transaction.date"
         required
-        style="
-          background-color: white;
-          color: black;
-          border: 1px solid rgb(0, 162, 199);
-          border-radius: 8px;
-          padding: 0.5rem;
-          width: 100%;
-        "
+        class="input-field"
       />
+      <small class="field-info">Select the date of the transaction.</small>
     </div>
 
     <div class="form-field">
@@ -24,15 +18,10 @@
         id="description"
         v-model="transaction.description"
         required
-        style="
-          background-color: white;
-          color: black;
-          border: 1px solid rgb(0, 162, 199);
-          border-radius: 8px;
-          padding: 0.5rem;
-          width: 100%;
-        "
+        class="input-field"
+        placeholder="Enter a brief description (e.g., Groceries, Taxi Ride)"
       />
+      <small class="field-info">Provide a brief description of the transaction.</small>
     </div>
 
     <div class="form-field">
@@ -45,16 +34,11 @@
         optionValue="value"
         placeholder="Select a Category"
         required
-        style="
-          background-color: white;
-          color: black;
-          border: 1px solid rgb(0, 162, 199);
-          border-radius: 8px;
-          padding: 0.5rem;
-          width: 100%;
-        "
+        class="input-field"
+        panelClass="dropdown-panel"
         panelStyle="background-color: white; color: black;"
       />
+      <small class="field-info">Choose the category that best describes this transaction.</small>
     </div>
 
     <div class="form-field">
@@ -66,15 +50,9 @@
         currency="USD"
         locale="en-US"
         required
-        style="
-          background-color: white;
-          color: black;
-          border: 1px solid rgb(0, 162, 199);
-          border-radius: 8px;
-          padding: 0.5rem;
-          width: 100%;
-        "
+        class="input-field"
       />
+      <small class="field-info">Enter the amount of the spending transaction.</small>
     </div>
 
     <div class="form-actions">
@@ -84,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue'
+import { ref, defineEmits, onMounted } from 'vue'
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
@@ -92,8 +70,16 @@ import { spendingData } from '../store/TransactionData'
 
 const emits = defineEmits(['submitted'])
 
+const getTodayDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const transaction = ref({
-  date: null,
+  date: getTodayDate(),
   description: '',
   category: null,
   amount: null,
@@ -114,21 +100,56 @@ const addNewSpending = () => {
 
 const resetForm = () => {
   transaction.value = {
-    date: null,
+    date: getTodayDate(),
     description: '',
     category: null,
     amount: null,
   }
 }
+
+onMounted(() => {
+  transaction.value.date = getTodayDate();
+});
 </script>
 
 <style scoped>
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .form-field {
-  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: rgb(0, 162, 199);
+  margin-bottom: 0.5rem;
+}
+
+.input-field {
+  background-color: white; 
+  color: black; 
+  border: 1px solid rgb(0, 162, 199); 
+  border-radius: 8px; 
+  padding: 0.5rem; 
+  width: 100%;
+}
+
+.field-info {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.5rem;
 }
 
 .form-actions {
-  text-align: right;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .submit-button {
@@ -139,9 +160,15 @@ const resetForm = () => {
   border-radius: 8px;
   padding: 0.7rem 1.5rem;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .submit-button:hover {
   background-color: #023e8a;
+}
+
+.p-select-option {
+  background-color: white ;
+  color: black;
 }
 </style>

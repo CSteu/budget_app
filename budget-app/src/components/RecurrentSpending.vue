@@ -1,6 +1,6 @@
 <template>
-  <div class="recurring-spending">
-    <h2>Recurring Spending</h2>
+  <div class="recurring-transactions">
+    <h2>Recurring Transactions</h2>
     <div class="table-container">
       <div v-if="state.recurringItems.length > 0">
         <div v-for="(item, index) in state.recurringItems" :key="index" class="table-row">
@@ -19,7 +19,7 @@
         </div>
       </div>
       <div v-else>
-        <p class="no-data">No recurring spending detected.</p>
+        <p class="no-data">No recurring transactions detected.</p>
       </div>
     </div>
   </div>
@@ -29,7 +29,8 @@
 import { inject, reactive, onMounted, watch } from "vue";
 
 const spendingData = inject('spendingData');
-console.log(spendingData);
+const incomeData = inject('incomeData');
+
 const state = reactive({
   recurringItems: [],
 });
@@ -42,29 +43,29 @@ const predefinedBlueShades = [
   '#00b4d8',
 ];
 
-const calculateRecurringSpending = () => {
+const calculateRecurringTransactions = () => {
   const expenses = Array.isArray(spendingData?.expenses) ? spendingData.expenses : [];
+  const incomes = Array.isArray(incomeData?.incomes) ? incomeData.incomes : [];
+
+  const allTransactions = [...expenses, ...incomes];
   
-  if (expenses.length === 0) {
-    console.warn("No expenses available in spendingData.");
+  if (allTransactions.length === 0) {
     state.recurringItems = [];
     return;
   }
 
-  console.log("Expenses:", expenses); // Debugging step
-
-  const grouped = expenses.reduce((acc, expense) => {
-    const name = expense.name || 'Unknown'; // Fallback for undefined names
-    const key = `${name}-${expense.amount}`;
+  const grouped = allTransactions.reduce((acc, transaction) => {
+    const name = transaction.name || transaction.description || 'Unknown';
+    const key = `${name}-${transaction.amount}`;
     if (!acc[key]) acc[key] = [];
-    acc[key].push(expense);
+    acc[key].push(transaction);
     return acc;
   }, {});
 
   const recurring = Object.entries(grouped)
     .filter(([_, records]) => {
-      const months = new Set(records.map((rec) => rec.date.slice(0, 7))); // Extract "YYYY-MM" format
-      return months.size >= 3; // Recurring for 3+ months
+      const months = new Set(records.map((rec) => rec.date.slice(0, 7)));
+      return months.size >= 3;
     })
     .map(([key, records]) => {
       const [name, amount] = key.split("-");
@@ -74,8 +75,8 @@ const calculateRecurringSpending = () => {
         months: [...new Set(records.map((rec) => rec.date.slice(0, 7)))],
       };
     })
-    .sort((a, b) => b.amount - a.amount) // Sort by highest amount
-    .slice(0, 3); // Top 3 items
+    .sort((a, b) => b.amount - a.amount)
+    .slice(0, 3);
 
   recurring.forEach((item, index) => {
     item.style = `background-color: ${predefinedBlueShades[index] || '#ccc'};`;
@@ -84,22 +85,21 @@ const calculateRecurringSpending = () => {
   state.recurringItems = recurring;
 };
 
-
 watch(
-  () => spendingData?.expenses,
+  [() => spendingData?.expenses, () => incomeData?.incomes],
   () => {
-    calculateRecurringSpending();
+    calculateRecurringTransactions();
   },
   { deep: true }
 );
 
 onMounted(() => {
-  calculateRecurringSpending();
+  calculateRecurringTransactions();
 });
 </script>
 
-<style>
-.recurring-spending {
+<style scoped>
+.recurring-transactions {
   max-width: 600px;
   margin: 1rem auto;
   padding: 2rem;

@@ -34,7 +34,6 @@ const totalSpending = computed(() => {
   const today = new Date();
   const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
   const nextMonthStart = new Date(today.getFullYear(), today.getMonth() + 1, 1);
-
   return expenses.value
     .filter((expense) => {
       const expenseDate = new Date(expense.date);
@@ -67,16 +66,21 @@ const setChartData = () => {
   let cumulativeTotal = 0;
   const labels = [];
   const data = [];
-  filteredExpenses.forEach((expense) => {
-    cumulativeTotal += expense.amount;
-    labels.push(
-      new Date(expense.date).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      })
+  let currentDate = new Date(currentMonthStart);
+  const endDate = new Date(nextMonthStart);
+
+  while (currentDate < endDate) {
+    const dateLabel = currentDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    labels.push(dateLabel);
+    const dailyExpenses = filteredExpenses.filter(
+      (expense) => new Date(expense.date).toDateString() === currentDate.toDateString()
     );
+    dailyExpenses.forEach((expense) => {
+      cumulativeTotal += expense.amount;
+    });
     data.push(cumulativeTotal);
-  });
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
 
   chartData.value = {
     labels,
@@ -87,6 +91,7 @@ const setChartData = () => {
         borderColor: "#0077b6",
         backgroundColor: "rgba(0, 183, 229, 0.2)",
         fill: true,
+        pointRadius: 0,
       },
     ],
   };
@@ -99,11 +104,43 @@ const setChartOptions = () => {
       legend: {
         display: false,
       },
+      annotation: {
+        annotations: {
+          targetLine: {
+            type: 'line',
+            yMin: targetSpending.value,
+            yMax: targetSpending.value,
+            borderColor: 'red',
+            borderWidth: 2,
+            label: {
+              content: 'Target Spending',
+              enabled: true,
+              position: 'start',
+              backgroundColor: 'red',
+              color: 'white'
+            }
+          },
+          currentSpendingLabel: {
+            type: 'label',
+            xValue: chartData.value ? chartData.value.labels[chartData.value.labels.length - 1] : '',
+            yValue: totalSpending.value,
+            content: [`Current: $${totalSpending.value.toFixed(2)}`],
+            color: 'white',
+            backgroundColor: '#0077b6',
+            borderRadius: 4,
+            padding: 6,
+            position: 'end',
+            textAlign: 'left',
+          }
+        }
+      }
     },
     scales: {
       x: {
         ticks: {
           color: "#333",
+          autoSkip: true,
+          maxTicksLimit: 10,
         },
         grid: {
           color: "#e0e0e0",
@@ -175,7 +212,7 @@ onMounted(() => {
 .header h3 {
   color: #9b9b9b;
   font-size: 1rem;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
 .header h4 {

@@ -12,7 +12,7 @@
         >
           <Column field="date" header="Date">
             <template #body="slotProps">
-              <span class="date-cell">{{ slotProps.data.date }}</span>
+              <span class="date-cell">{{ slotProps.data.formattedDate }}</span>
             </template>
           </Column>
           <Column field="description" header="Description"></Column>
@@ -73,10 +73,29 @@ export default {
         return transactionDate >= startOfDecember && transactionDate <= endOfDecember;
       });
 
-      // Sort by date in descending order
       this.filteredTransactions.sort(
         (a, b) => new Date(b.date) - new Date(a.date)
       );
+
+      this.groupAndFormatDates();
+    },
+
+    groupAndFormatDates() {
+      let lastFormattedDate = null;
+      this.filteredTransactions.forEach((transaction, index) => {
+        const currentDate = new Date(transaction.date).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        });
+
+        if (currentDate !== lastFormattedDate) {
+          transaction.formattedDate = currentDate;
+          lastFormattedDate = currentDate;
+        } else {
+          transaction.formattedDate = ''; // Hide the date for duplicate entries on the same day
+        }
+      });
     },
   },
   watch: {
@@ -100,7 +119,6 @@ export default {
 </script>
 
 <style>
-/* Your existing styles remain unchanged */
 body {
   font-family: 'Poppins', sans-serif;
   background-color: #f0f2f5;
@@ -123,7 +141,7 @@ h1 {
   font-weight: 600;
   color: #2c3e50;
   text-align: center;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
 .content {
@@ -151,7 +169,7 @@ h1 {
   color: var(--vt-c-text-dark-2);
   font-weight: 600;
   text-align: left;
-  font-size: .9rem;
+  font-size: 0.9rem;
 }
 
 .expense-table .p-datatable-tbody > tr > td {
@@ -159,7 +177,7 @@ h1 {
   padding: 0.75rem 0;
   color: #34495e;
   text-align: left;
-  height: 2.5rem; 
+  height: 2.5rem;
 }
 
 .p-datatable-wrapper {
