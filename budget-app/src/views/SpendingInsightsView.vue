@@ -7,6 +7,7 @@ import IncomeExpenseBarChart from '@/components/IncomeExpenseBarChart.vue'
 import SpendingLineChart from '@/components/SpendingLineChart.vue'
 import SpendingCategories from '@/components/SpendingCategories.vue'
 import RecurrentSpending from '@/components/RecurrentSpending.vue'
+import Checking from '@/components/Checking.vue'
 
 provide('spendingData', spendingData)
 provide('incomeData', incomeData)
@@ -45,6 +46,7 @@ provide('incomeData', incomeData)
       <div class="right-column">
         <SpendingCategories />
         <RecurrentSpending />
+        <Checking />
       </div>
     </div>
   </main>

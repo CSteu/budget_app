@@ -33,6 +33,11 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../components/EditBudget.vue'),
     },
+    {
+      path: '/checking',
+      name: 'Checking',
+      component: () => import('../components/Checking.vue'),
+    },
   ],
 })
 
