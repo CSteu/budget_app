@@ -27,18 +27,12 @@ onMounted(() => {
 <template>
   <main>
     <div class="header">
-      <h1>Spending Insights</h1>
+      <div class="header-title">
+        <i class="pi pi-chart-line header-icon"></i>
+        <h1>Spending Insights</h1>
+      </div>
       <router-link to="/add-spending">
-        <button
-          style="
-            background-color: rgb(0, 162, 199);
-            border: none;
-            color: white;
-            font-weight: bold;
-            border-radius: 8px;
-            padding: 0.7rem 1.5rem;
-          "
-        >
+        <button class="add-transaction">
           <i class="pi pi-plus" style="margin-right: 0.5rem"></i>
           Add New Transaction
         </button>
@@ -64,14 +58,59 @@ onMounted(() => {
   </main>
 </template>
 
+
 <style scoped>
 .header {
   display: flex;
   justify-content: space-between;
-  flex-wrap: nowrap;
-  flex-direction: row;
   align-items: center;
-  margin: auto 1rem;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(90deg, #03045e, #023e8a, #0077b6, #0096c7, #00b4d8);
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+}
+
+.header-icon {
+  font-size: 2rem;
+  color: #fff;
+  margin-right: 0.5rem;
+}
+
+.header h1 {
+  font-size: 2rem;
+  color: #ffffff;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 700;
+}
+
+.add-transaction {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 0.7rem 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.add-transaction:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.add-transaction:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .wrapper {
@@ -86,9 +125,5 @@ onMounted(() => {
 
 .right-column {
   width: 35%;
-}
-
-.add-spending-button {
-  cursor: pointer;
 }
 </style>

@@ -62,8 +62,12 @@ export default {
       return current.toLocaleString('en-US', { month: 'short' });
     },
     formatCurrency(value) {
-      const roundedValue = Number(value).toFixed(2);
-      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(roundedValue);
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(value);
     },
     roundToTwoDecimals(value) {
       return Math.round((value + Number.EPSILON) * 100) / 100;
@@ -97,8 +101,10 @@ export default {
     setChartData() {
       const groupedData = this.groupDataByMonth();
       const labels = Object.keys(groupedData).map(date => this.getMonthAbbreviation(date));
-      const incomeData = Object.keys(groupedData).map((label) => groupedData[label].income);
-      const expenseData = Object.keys(groupedData).map((label) => groupedData[label].expense);
+
+      // Round each income and expense to two decimals
+      const incomeData = Object.keys(groupedData).map(label => this.roundToTwoDecimals(groupedData[label].income));
+      const expenseData = Object.keys(groupedData).map(label => this.roundToTwoDecimals(groupedData[label].expense));
 
       const now = new Date();
       this.currentMonthKey = this.formatDateToMonth(now);

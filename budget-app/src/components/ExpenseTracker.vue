@@ -1,6 +1,6 @@
 <template>
   <div class="expense-tracker">
-    <h2>December Transactions</h2>
+    <h1>December Transactions</h1>
     <div class="content">
       <div class="expense-table-container">
         <DataTable

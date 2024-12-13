@@ -15,7 +15,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0;
+  margin-bottom: 5rem;
   font-family: "TT Norms-bold", "TT Norms", "TT Norms-fallback", proxima-nova, "Helvetica Neue", Verdana, Arial, Helvetica, sans-serif;
 }
 </style>

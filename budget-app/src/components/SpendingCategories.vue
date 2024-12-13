@@ -16,7 +16,7 @@
           </div>
         </div>
         <div class="row-item total">
-          <h3>${{ category.totalSpent.toFixed(2) }}</h3>
+          <h3>{{ formatCurrency(category.totalSpent) }}</h3>
         </div>
       </div>
     </div>
@@ -28,11 +28,11 @@ import { inject, reactive, watch, onMounted } from "vue";
 import Chart from "primevue/chart";
 
 const predefinedBlueShades = [
-  '#03045e', 
+  '#03045e',
   '#023e8a',
   '#0077b6',
   '#0096c7',
-  '#00b4d8', 
+  '#00b4d8',
 ];
 
 const spendingData = inject('spendingData');
@@ -56,8 +56,20 @@ const chartOptions = reactive({
     legend: {
       display: false,
     },
-  },
+    tooltip: {
+      callbacks: {
+        label: (tooltipItem) => {
+          const value = tooltipItem.raw;
+          return `$${parseFloat(value).toFixed(2)}`;
+        }
+      }
+    }
+  }
 });
+
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+};
 
 const calculateTopCategories = () => {
   const expenses = Array.isArray(spendingData?.expenses) ? spendingData.expenses : [];
@@ -98,7 +110,7 @@ const calculateTopCategories = () => {
 
 const updateChart = () => {
   chartData.labels = state.topCategories.map((cat) => cat.category);
-  chartData.datasets[0].data = state.topCategories.map((cat) => cat.totalSpent.toFixed(2));
+  chartData.datasets[0].data = state.topCategories.map((cat) => parseFloat(cat.totalSpent.toFixed(2)));
   chartData.datasets[0].backgroundColor = predefinedBlueShades.slice(0, state.topCategories.length);
 };
 

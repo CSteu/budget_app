@@ -52,9 +52,11 @@ const goBack = () => {
 
 <style scoped>
 .add-transaction-page {
-  padding: 1rem;
+  padding: 3rem;
   max-width: 600px;
   margin: 0 auto;
+  background-color: white;
+  border-radius: 1rem;
 }
 
 .header {
