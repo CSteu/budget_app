@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/SpendingInsightsView.vue'
+import AccountView from '../views/AccountView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,9 +35,9 @@ const router = createRouter({
       component: () => import('../components/EditBudget.vue'),
     },
     {
-      path: '/checking',
-      name: 'Checking',
-      component: () => import('../components/Checking.vue'),
+      path: '/Accounts',
+      name: 'Accounts',
+      component: AccountView,
     },
   ],
 })
