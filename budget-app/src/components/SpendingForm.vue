@@ -66,7 +66,7 @@ import { ref, defineEmits, onMounted } from 'vue'
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
-import { spendingData } from '../store/TransactionData'
+import axios from 'axios'
 
 const emits = defineEmits(['submitted'])
 
@@ -89,13 +89,28 @@ const categories = [
   { name: 'Food', value: 'Food' },
   { name: 'Transport', value: 'Transport' },
   { name: 'Entertainment', value: 'Entertainment' },
+  { name: 'Health', value: 'Health' },
+  { name: 'Bills', value: 'Bills' },
+  { name: 'Groceries', value: 'Groceries' },
+  { name: 'Shopping', value: 'Shopping' },
+  { name: 'Subscriptions', value: 'Subscriptions' },
+  { name: 'Dining', value: 'Dining' },
+  { name: 'Education', value: 'Education' },
+  { name: 'Other', value: 'Other' }
 ]
 
-const addNewSpending = () => {
-  spendingData.expenses.push({ ...transaction.value })
-  localStorage.setItem('spendingData', JSON.stringify(spendingData.expenses))
-  resetForm()
-  emits('submitted')
+const addNewSpending = async () => {
+  try {
+    const response = await axios.post(`https://localhost:5001/api/transactions`, { ...transaction.value })
+    if (response.status === 201) {
+      resetForm()
+      emits('submitted')
+    } else {
+      console.error('Failed to add transaction', response)
+    }
+  } catch (error) {
+    console.error('Error adding transaction:', error)
+  }
 }
 
 const resetForm = () => {
@@ -132,11 +147,11 @@ onMounted(() => {
 }
 
 .input-field {
-  background-color: white; 
-  color: black; 
-  border: 1px solid rgb(0, 162, 199); 
-  border-radius: 8px; 
-  padding: 0.5rem; 
+  background-color: white;
+  color: black;
+  border: 1px solid rgb(0, 162, 199);
+  border-radius: 8px;
+  padding: 0.5rem;
   width: 100%;
 }
 

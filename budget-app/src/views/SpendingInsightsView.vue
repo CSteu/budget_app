@@ -1,6 +1,6 @@
 <script setup>
-import { provide } from 'vue'
-import { spendingData, incomeData } from '../store/TransactionData'
+import { provide, onMounted } from 'vue'
+import { spendingData, incomeData, loadIncomeData, loadSpendingData } from '../store/TransactionData'
 
 import ExpenseTracker from '../components/ExpenseTracker.vue'
 import IncomeExpenseBarChart from '@/components/IncomeExpenseBarChart.vue'
@@ -11,6 +11,16 @@ import Checking from '@/components/Checking.vue'
 
 provide('spendingData', spendingData)
 provide('incomeData', incomeData)
+
+const refreshData = async () => {
+  await loadSpendingData();
+  await loadIncomeData();
+};
+
+onMounted(() => {
+  refreshData();
+});
+
 </script>
 
 <template>

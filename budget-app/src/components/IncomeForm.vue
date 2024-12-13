@@ -59,6 +59,7 @@
 import { ref, defineEmits, onMounted } from "vue";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
+import axios from "axios";
 
 const emits = defineEmits(["submitted"]);
 
@@ -74,15 +75,28 @@ const transaction = ref({
   date: getTodayDate(),
   description: "",
   amount: null,
-  category: "Income", 
+  category: "Income",
 });
 
-const addNewIncome = () => {
-  const incomeData = JSON.parse(localStorage.getItem("incomeData") || "[]");
-  incomeData.push({ ...transaction.value });
-  localStorage.setItem("incomeData", JSON.stringify(incomeData));
-  resetForm();
-  emits("submitted");
+
+const addNewIncome = async () => {
+  try {
+    const response = await axios.post(`https://localhost:5001/api/transactions`, {
+      description: transaction.value.description,
+      amount: transaction.value.amount,
+      date: transaction.value.date,
+      category: transaction.value.category,
+      isIncome: true
+    });
+    if (response.status === 201) {
+      resetForm();
+      emits("submitted");
+    } else {
+      console.error("Failed to add income transaction", response);
+    }
+  } catch (error) {
+    console.error("Error adding income transaction:", error);
+  }
 };
 
 const resetForm = () => {
@@ -119,11 +133,11 @@ onMounted(() => {
 }
 
 .input-field {
-  background-color: white; 
-  color: black; 
-  border: 1px solid rgb(0, 162, 199); 
-  border-radius: 8px; 
-  padding: 0.5rem; 
+  background-color: white;
+  color: black;
+  border: 1px solid rgb(0, 162, 199);
+  border-radius: 8px;
+  padding: 0.5rem;
   width: 100%;
 }
 

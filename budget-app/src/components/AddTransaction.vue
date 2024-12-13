@@ -1,14 +1,14 @@
 <template>
   <div class="add-transaction-page">
-    <div class="backBtn">
-      <button class="back-button pi pi-arrow-left" @click="goBack"> Cancel</button>
+   <div class="backBtn">
+      <button class="back-button pi pi-arrow-left" @click="goBack"> Return</button>
     </div>
     <div class="header">
       <h1>Add Transaction</h1>
     </div>
 
     <p class="instructions">
-      Record a new transaction by selecting whether it's an income or a spending transaction. 
+      Record a new transaction by selecting whether it's an income or a spending transaction.
       Then, fill out the necessary details in the form below.
     </p>
 
@@ -30,9 +30,9 @@
 
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import SpendingForm from "./SpendingForm.vue";
 import IncomeForm from "./IncomeForm.vue";
-import { useRouter } from "vue-router";
 
 const router = useRouter();
 const isSpending = ref(true);

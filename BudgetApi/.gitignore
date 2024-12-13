@@ -1,0 +1,222 @@
+# Compiled files
+*.dll
+*.exe
+*.so
+*.dylib
+*.class
+
+# Directories
+bin/
+obj/
+.venv/
+out/
+publish/
+debug/
+release/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs and Database
+*.log
+*.nlog
+*.out
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+*.mdf
+*.ldf
+
+# Azure Files
+.localhistory/
+*.publishsettings
+AzurePipeline.runsettings
+
+# Rider IDE files
+.idea/
+*.sln.iml
+
+# Visual Studio files
+.vs/
+*.vscode/
+*.tfstate
+*.code-workspace
+
+# Node.js files (if using Node.js for Gulp or npm/yarn)
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# OS Files
+Thumbs.db
+.DS_Store
+
+# Package files
+*.nupkg
+*.snupkg
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+
+# Test Results
+TestResults/
+
+# Reports
+*.coverage
+*.coveragexml
+*.cov
+*.lcov
+*.clover
+
+# Web files
+dist/
+public/
+wwwroot/
+static/
+build/
+
+# IDE Files
+.idea/
+*.sln.docstates
+*.suo
+*.sln.iml
+*.sln.ide
+
+# Resharper files
+_ReSharper*/
+*.DotSettings.user
+
+# NCrunch
+.ncrunchsolution
+*.ncrunchproject
+
+# Coverage Reports
+coverage/
+coverage-final.json
+lcov-report/
+
+# JetBrains Rider
+.idea/
+
+# JetBrains Rider File Watchers
+.idea/*FileWatchers
+
+# Rider Local History
+.idea/.ideaLocalHistory
+
+# Rider Project Files
+.idea/.idea-metadata
+
+# Rider Miscellaneous Files
+.idea/.idea_modules
+
+# Rider Workspace
+.idea/workspace.xml
+
+# Rider's Solution Configuration
+.idea/*.sln.iml
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Git Folders
+.git/
+*.lock
+
+# Cache Files
+*.cache
+*.caches
+*.temp
+*.cache.bak
+
+# Backup files
+*.bak
+*.old
+
+# Project Specific
+project.lock.json
+project.fragment.lock.json
+
+# JetBrains Rider Indexed Files
+.idea/.indexes
+.idea/.library
+
+# Visual Studio Code
+.vscode/
+
+# Windows-specific files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS files
+.DS_Store
+._*
+
+# Linux Files
+*~ 
+.nfs*
+
+# Other
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage/
+lcov-report/
+
+# npm Packages
+node_modules/
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+
+# Build Directories
+build/
+dist/
+
+# Auto-generated files from Visual Studio
+*.generated.cs
+*.generated.json
+*.generated.ts
+
+# .NET Core Local Environment
+.env
+
+# Visual Studio Temporary Files
+*.[Cc]ache/
+*.csproj.user
+*.csproj.DotSettings.user
+
+# Windows File System
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Custom for C# .NET
+project.lock.json
+project.fragment.lock.json
+
+# Resharper files
+_ReSharper*/
+*.DotSettings.user
+*.DotSettings
