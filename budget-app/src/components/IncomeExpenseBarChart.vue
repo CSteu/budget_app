@@ -23,7 +23,7 @@ export default {
     return {
       chartData: null,
       chartOptions: null,
-      currentMonthKey: null, 
+      currentMonthKey: null,
     };
   },
   computed: {
@@ -42,14 +42,14 @@ export default {
     },
     moneyEarned() {
       const currentMonthData = this.groupDataByMonth()[this.currentMonthKey] || { income: 0 };
-      return currentMonthData.income;
+      return this.roundToTwoDecimals(currentMonthData.income);
     },
     moneySpent() {
       const currentMonthData = this.groupDataByMonth()[this.currentMonthKey] || { expense: 0 };
-      return currentMonthData.expense;
+      return this.roundToTwoDecimals(currentMonthData.expense);
     },
     monthlySaving() {
-      return this.moneyEarned - this.moneySpent;
+      return this.roundToTwoDecimals(this.moneyEarned - this.moneySpent);
     },
   },
   methods: {
@@ -62,7 +62,11 @@ export default {
       return current.toLocaleString('en-US', { month: 'short' });
     },
     formatCurrency(value) {
-      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+      const roundedValue = Number(value).toFixed(2);
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(roundedValue);
+    },
+    roundToTwoDecimals(value) {
+      return Math.round((value + Number.EPSILON) * 100) / 100;
     },
     groupDataByMonth() {
       const now = new Date();
@@ -169,10 +173,10 @@ export default {
           },
           y: {
             ticks: {
-              color: "rgb(100, 100, 100)", 
+              color: "rgb(100, 100, 100)",
             },
             grid: {
-              color: "rgba(136, 136, 136, 0.2)", 
+              color: "rgba(136, 136, 136, 0.2)",
             },
           },
         },

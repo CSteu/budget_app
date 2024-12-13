@@ -8,6 +8,7 @@ import SpendingLineChart from '@/components/SpendingLineChart.vue'
 import SpendingCategories from '@/components/SpendingCategories.vue'
 import RecurrentSpending from '@/components/RecurrentSpending.vue'
 import Checking from '@/components/Checking.vue'
+import KanyeRest from '@/components/KanyeRest.vue'
 
 provide('spendingData', spendingData)
 provide('incomeData', incomeData)
@@ -57,6 +58,7 @@ onMounted(() => {
         <SpendingCategories />
         <RecurrentSpending />
         <Checking />
+        <!-- <KanyeRest /> -->
       </div>
     </div>
   </main>

@@ -6,12 +6,8 @@ namespace BudgetApi
 	[ApiController]
 	public class TransactionsController : ControllerBase
 	{
-		private static List<Transaction> Transactions = new List<Transaction>
-		{
-			new Transaction { Id = 1, Description = "Salary", Amount = 3000, Date = DateTime.Now, Category = "Income", IsIncome = true },
-			new Transaction { Id = 2, Description = "Groceries", Amount = 150, Date = DateTime.Now, Category = "Food", IsIncome = false },
-			new	Transaction { Id = 3, Description = "Electric Bill", Amount = 100, Date = DateTime.Now, Category = "Utilities", IsIncome = false }
-		};
+		private static List<Transaction> Transactions = TransactionData.Transactions;
+
 
 		// GET: api/transactions
 		[HttpGet]
