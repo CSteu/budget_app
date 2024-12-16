@@ -39,6 +39,11 @@ const router = createRouter({
       name: 'Accounts',
       component: AccountView,
     },
+    {
+      path: '/starting-value',
+      name: 'StartingValue',
+      component: () => import('../components/StartingAmount.vue'),
+    },
   ],
 })
 

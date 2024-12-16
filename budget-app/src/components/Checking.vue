@@ -1,16 +1,12 @@
-<script setup>
-    let startingBalance = 2000
-</script>
-
 <template>
     <div class="card">
         <div class="header">
             <div class="header-left">
-                <h4 id="currentMonth">Bank Account</h4>
-                <h1>{{ formatCurrency(monthlySaving + startingBalance) }}</h1>
-                <h2>Balance '24: {{ formatCurrency(startingBalance) }}</h2>
-                <h3>Income: {{ formatCurrency(moneyEarned) }}</h3>
-                <h3>Expenses: {{ formatCurrency(moneySpent) }}</h3>
+                <h4 id="currentMonth">Checking Account</h4>
+                <h1>{{ formatCurrency(currentAmount) }}</h1>
+                <h2>Balance '24: {{ formatCurrency(CheckingAmount) }}</h2>
+                <h3>Income: {{ formatCurrency(incomes) }}</h3>
+                <h3>Expenses: {{ formatCurrency(expenses) }}</h3>
             </div>
         </div>
     </div>
@@ -23,7 +19,7 @@ export default {
 components: {
     Chart,
 },
-inject: ["spendingData", "incomeData"],
+inject: ["checkingData", "spendingData", "incomeData"],
 data() {
     return {
     chartData: null,
@@ -45,144 +41,15 @@ computed: {
     transactions() {
     return [...this.expenses, ...this.incomes];
     },
-    moneyEarned() {
-    const currentMonthData = this.groupDataByMonth()[this.currentMonthKey] || { income: 0 };
-    return currentMonthData.income;
-    },
-    moneySpent() {
-    const currentMonthData = this.groupDataByMonth()[this.currentMonthKey] || { expense: 0 };
-    return currentMonthData.expense;
-    },
-    monthlySaving() {
-    return this.moneyEarned - this.moneySpent;
+    currentAmount() {
+    return this.CheckingAmount + this.incomes - this.expenses;
     },
 },
 methods: {
-    formatDateToMonth(date) {
-    const current = new Date(date);
-    return `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, "0")}`;
-    },
-    getMonthAbbreviation(date) {
-    const current = new Date(date);
-    return current.toLocaleString('en-US', { month: 'short' });
-    },
     formatCurrency(value) {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
     },
-    groupDataByMonth() {
-    const now = new Date();
-    const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-
-    const groupedData = {};
-    this.transactions.forEach((entry) => {
-        const entryDate = new Date(entry.date);
-        if (entryDate >= oneYearAgo) {
-        const key = this.formatDateToMonth(entry.date);
-        if (!groupedData[key]) groupedData[key] = { income: 0, expense: 0 };
-
-        if (this.incomes.some((income) => income === entry)) {
-            groupedData[key].income += entry.amount;
-        } else {
-            groupedData[key].expense += entry.amount;
-        }
-        }
-    });
-
-    return Object.keys(groupedData)
-        .sort((a, b) => new Date(a) - new Date(b))
-        .reduce((sortedData, key) => {
-        sortedData[key] = groupedData[key];
-        return sortedData;
-        }, {});
-    },
-    setChartData() {
-    const groupedData = this.groupDataByMonth();
-    const labels = Object.keys(groupedData).map(date => this.getMonthAbbreviation(date)); // Use month abbreviations
-    const incomeData = Object.keys(groupedData).map((label) => groupedData[label].income);
-    const expenseData = Object.keys(groupedData).map((label) => groupedData[label].expense);
-
-    const now = new Date();
-    this.currentMonthKey = this.formatDateToMonth(now);
-
-    return {
-        labels,
-        datasets: [
-        {
-            label: "Income",
-            backgroundColor: Object.keys(groupedData).map(label => label === this.currentMonthKey ? "#00b4d8" : "rgb(220, 218, 215)"),
-            borderColor: "#0096c7",
-            borderRadius: 5,
-            hoverBackgroundColor: "#00b4d8",
-            data: incomeData,
-        },
-        {
-            label: "Expense",
-            backgroundColor: Object.keys(groupedData).map(label => label === this.currentMonthKey ? "#0077b6" : "rgb(180, 178, 175)"),
-            borderColor: "#023e8a",
-            borderRadius: 5,
-            hoverBackgroundColor: "#0077b6",
-            data: expenseData,
-        },
-        ],
-    };
-    },
-    setChartOptions() {
-    return {
-        maintainAspectRatio: false,
-        interaction: {
-        mode: 'index',
-        intersect: false
-        },
-        plugins: {
-        legend: {
-            display: false,
-        },
-        tooltip: {
-            callbacks: {
-            title: (tooltipItems) => {
-                const label = tooltipItems[0].label;
-                return label;
-            },
-            label: (tooltipItem) => {
-                const datasetLabel = tooltipItem.dataset.label;
-                const value = tooltipItem.raw;
-                return `${datasetLabel}: $${value}`;
-            },
-            footer: (tooltipItems) => {
-                const incomeItem = tooltipItems.find(t => t.datasetIndex === 0);
-                const expenseItem = tooltipItems.find(t => t.datasetIndex === 1);
-                if (incomeItem && expenseItem) {
-                const incomeVal = incomeItem.raw;
-                const expenseVal = expenseItem.raw;
-                const net = (incomeVal - expenseVal).toFixed(2);
-                return `Net Savings: $${net}`;
-                }
-                return '';
-            }
-            }
-        }
-        },
-        scales: {
-        x: {
-            ticks: {
-            color: "rgb(100, 100, 100)",
-            },
-            grid: {
-            color: "rgba(136, 136, 136, 0.2)",
-            display: true,
-            },
-        },
-        y: {
-            ticks: {
-            color: "rgb(100, 100, 100)", 
-            },
-            grid: {
-            color: "rgba(136, 136, 136, 0.2)", 
-            },
-        },
-        },
-    };
-    },
+    
     updateChart() {
     this.chartData = this.setChartData();
     this.chartOptions = this.setChartOptions();
