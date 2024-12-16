@@ -1,26 +1,30 @@
 <script setup>
 import { provide, onMounted } from 'vue'
-import { spendingData, incomeData, loadIncomeData, loadSpendingData } from '../store/TransactionData'
+import {
+  spendingData,
+  incomeData,
+  loadIncomeData,
+  loadSpendingData,
+} from '../store/TransactionData'
 
-import ExpenseTracker from '../components/ExpenseTracker.vue'
-import IncomeExpenseBarChart from '@/components/IncomeExpenseBarChart.vue'
-import SpendingLineChart from '@/components/SpendingLineChart.vue'
-import SpendingCategories from '@/components/SpendingCategories.vue'
-import RecurrentSpending from '@/components/RecurrentSpending.vue'
-import KanyeRest from '@/components/KanyeRest.vue'
+import ExpenseTracker from '../components/SpendingInsights/ExpenseTracker.vue'
+import IncomeExpenseBarChart from '@/components/SpendingInsights/IncomeExpenseBarChart.vue'
+import SpendingLineChart from '@/components/SpendingInsights/SpendingLineChart.vue'
+import SpendingCategories from '@/components/SpendingInsights/SpendingCategories.vue'
+import RecurrentSpending from '@/components/SpendingInsights/RecurrentSpending.vue'
+import KanyeRest from '@/components/SpendingInsights/KanyeRest.vue'
 
 provide('spendingData', spendingData)
 provide('incomeData', incomeData)
 
 const refreshData = async () => {
-  await loadSpendingData();
-  await loadIncomeData();
-};
+  await loadSpendingData()
+  await loadIncomeData()
+}
 
 onMounted(() => {
-  refreshData();
-});
-
+  refreshData()
+})
 </script>
 
 <template>
@@ -55,7 +59,6 @@ onMounted(() => {
     </div>
   </main>
 </template>
-
 
 <style scoped>
 .header {
@@ -97,7 +100,10 @@ onMounted(() => {
   cursor: pointer;
   display: flex;
   align-items: center;
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.3s ease;
   backdrop-filter: blur(5px);
 }
 
