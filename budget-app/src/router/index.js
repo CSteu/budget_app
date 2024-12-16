@@ -41,7 +41,7 @@ const router = createRouter({
     },
     {
       path: '/starting-value',
-      name: 'StartingValue',
+      name: 'StartingAmount',
       component: () => import('../components/StartingAmount.vue'),
     },
   ],

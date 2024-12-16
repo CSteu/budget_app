@@ -20,8 +20,8 @@
         </div>
 
         <div>
-        <CheckingForm v-if="isChecking" @submitted="handleCheckingSubmit" />
-        <SavingsForm v-else @submitted="handleSavingsSubmit" />
+            <CheckingForm v-if="isChecking" @submitted="handleCheckingSubmit" />
+            <SavingsForm v-else @submitted="handleSavingsSubmit" />
         </div>
     </div>
 </template>
