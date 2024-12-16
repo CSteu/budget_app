@@ -9,23 +9,22 @@
             Add in the starting amounts for both your Checking Account as well as your Savings Account.
         </p>
 
-        <div class="account-toggle">
-            <label class="toggle-label">
+        <div class="toggle-switch">
+            <span class="toggle-label">Checking</span>
+            <label class="switch">
                 <input type="checkbox" v-model="isChecking" />
-                <span>Checking</span>
+                <span class="slider"></span>
             </label>
-            <label class="toggle-label">
-                <input type="checkbox" v-model="isChecking" disabled />
-                <span>Savings</span>
-            </label>
+            <span class="toggle-label">Savings</span>
         </div>
 
         <div class="form-content">
-            <CheckingForm v-if="isChecking" @submitted="handleCheckingSubmit" />
+            <CheckingForm v-if="!isChecking" @submitted="handleCheckingSubmit" />
             <SavingsForm v-else @submitted="handleSavingsSubmit" />
         </div>
     </div>
 </template>
+
 
 <script setup>
 import { ref } from "vue";
@@ -34,7 +33,7 @@ import CheckingForm from "./CheckingForm.vue";
 import SavingsForm from "./SavingsForm.vue";
 
 const router = useRouter();
-const isChecking = ref(true);
+const isChecking = ref(false);
 
 const handleCheckingSubmit = () => {
     router.push("/accounts");
@@ -114,5 +113,64 @@ const goBack = () => {
 
 .form-content {
     margin-top: 1rem;
+}
+
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgb(0, 162, 199);
+  transition: 0.4s;
+  border-radius: 30px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 24px;
+  width: 24px;
+  left: 4px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: rgb(0, 162, 199);
+}
+
+input:checked + .slider:before {
+  transform: translateX(30px);
+}
+
+.toggle-label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: rgb(0, 162, 199);
 }
 </style>

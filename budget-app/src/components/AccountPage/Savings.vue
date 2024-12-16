@@ -38,8 +38,8 @@ export default {
       return [...this.expenses, ...this.incomes];
     },
     currentBalance() {
-      const totalIncome = this.incomes.reduce((sum, income) => sum + (parseFloat(income.amount) || 0), 0);
-      const totalExpenses = this.expenses.reduce((sum, expense) => sum + (parseFloat(expense.amount) || 0), 0);
+      const totalIncome = 0
+      const totalExpenses = 0;
       return this.startingAmount + totalIncome - totalExpenses;
     },
     averageIncome() {

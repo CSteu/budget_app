@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BudgetApi.Data;
+using BudgetApi.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetApi
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class AccountsController : ControllerBase
 	{
