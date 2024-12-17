@@ -14,12 +14,15 @@
 
 <script>
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 export default {
+  
   inject: ['checkingData', 'transferData', 'spendingData', 'incomeData'],
   data() {
     return {
       currentMonthKey: this.getCurrentMonthKey(),
+      router: useRouter(),
     }
   },
   computed: {
@@ -86,6 +89,9 @@ export default {
     },
     roundToTwoDecimals(value) {
       return Math.round((value + Number.EPSILON) * 100) / 100;
+    },
+    goToSetStartingAmount(){
+      this.router.push('/starting-amount');
     },
     async updateCurrentBalance(balance) {
       try {

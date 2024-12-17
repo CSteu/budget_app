@@ -87,7 +87,6 @@ namespace BudgetApi.Data
             new Transaction { Id = 59, Description = "New Year’s Eve Taxi Ride", Amount = 45.50m, Date = new DateTime(2024, 12, 31), Category = "Transport", IsIncome = false },
             new Transaction { Id = 60, Description = "Gift Wrapping Supplies", Amount = 25.45m, Date = new DateTime(2024, 12, 9), Category = "Gifts", IsIncome = false },
             new Transaction { Id = 69, Description = "Holiday Bonus", Amount = 2500.00m, Date = new DateTime(2024, 12, 22), Category = "Income", IsIncome = true }
-
         };
     }
 }

@@ -61,8 +61,8 @@
 
   const router = useRouter();
 
-  const monthlyIncome = ref(parseFloat(localStorage.getItem("monthlyIncome")) || 3000); // Default income
-  const spendingTarget = ref(parseFloat(localStorage.getItem("spendingTarget")) || 2700); // Default target
+  const monthlyIncome = ref(parseFloat(localStorage.getItem("monthlyIncome")) || 5000); // Default income
+  const spendingTarget = ref(parseFloat(localStorage.getItem("spendingTarget")) || 1000); // Default target
 
   const recommendedTarget = computed(() => (monthlyIncome.value * 0.9).toFixed(2));
   const savingsPercentage = computed(() =>

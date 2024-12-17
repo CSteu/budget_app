@@ -31,7 +31,6 @@ const refreshData = async () => {
     await loadCheckingData()
     await loadSavingsData()
     await loadTransferData()
-    console.log(checkingData)
   } catch (error) {
     console.error('Error loading data', error)
   } finally {
