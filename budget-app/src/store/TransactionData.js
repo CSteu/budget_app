@@ -85,6 +85,26 @@ export const loadIncomeData = async () => {
 
 loadIncomeData();
 
+const loadTransfersFromAPI = async () => {
+  try {
+    const response = await axios.get(`${apiBaseUrl}/Transfers`);
+    return response.data;
+  } catch (error) {
+    console.error('Error loading transfers data from API:', error);
+    return [];
+  }
+};
+
+export const transferData = reactive({
+  transfers: []
+});
+
+export const loadTransferData = async () => {
+  transferData.transfers = await loadTransfersFromAPI();
+};
+
+loadIncomeData();
+
 // Post new spending data to the API
 export const addSpending = async (newSpending) => {
   try {

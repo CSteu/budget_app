@@ -41,10 +41,15 @@ const router = createRouter({
       component: AccountView,
     },
     {
-      path: '/starting-value',
+      path: '/starting-amount',
       name: 'StartingAmount',
       component: StartingAmount,
     },
+    {
+      path: '/transfer',
+      name: 'Transfer',
+      component: () => import ('../components/AccountPage/TransferForm.vue'),
+    }
   ],
 })
 

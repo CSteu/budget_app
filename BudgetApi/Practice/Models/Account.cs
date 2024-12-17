@@ -10,6 +10,8 @@ namespace BudgetApi.Models
     {
         public int Id { get; set; }
 
+        public string Name { get; set; }
+
         public double StartingBalance { get; set; }
 
         public double CurrentBalance { get; set; }

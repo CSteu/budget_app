@@ -38,7 +38,6 @@ namespace BudgetApi
                 return NotFound();
             }
 
-            existingAccount.StartingBalance = updatedAccount.StartingBalance;
             existingAccount.CurrentBalance = updatedAccount.CurrentBalance;
             existingAccount.isChecking = updatedAccount.isChecking;
             return NoContent();

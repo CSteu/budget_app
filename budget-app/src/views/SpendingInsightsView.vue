@@ -34,12 +34,20 @@ onMounted(() => {
         <i class="pi pi-chart-line header-icon"></i>
         <h1>Spending Insights</h1>
       </div>
-      <router-link to="/add-spending">
-        <button class="add-transaction">
-          <i class="pi pi-plus" style="margin-right: 0.5rem"></i>
-          Add New Transaction
-        </button>
-      </router-link>
+      <div class="header-buttons">
+        <router-link to="/accounts">
+          <button class="add-transaction">
+            <i  style="margin-right: 0.5rem"></i>
+            View Accounts
+          </button>
+        </router-link>
+        <router-link to="/add-spending">
+          <button class="add-transaction">
+            <i class="pi pi-plus" style="margin-right: 0.5rem"></i>
+            Add New Transaction
+          </button>
+        </router-link>
+      </div>
     </div>
 
     <div class="wrapper">
@@ -54,7 +62,7 @@ onMounted(() => {
       <div class="right-column">
         <SpendingCategories />
         <RecurrentSpending />
-        <!-- <KanyeRest /> -->
+        <KanyeRest />
       </div>
     </div>
   </main>
@@ -69,6 +77,7 @@ onMounted(() => {
   background: linear-gradient(90deg, #03045e, #023e8a, #0077b6, #0096c7, #00b4d8);
   border-radius: 0 0 16px 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 72rem;
 }
 
 .header-title {
@@ -88,6 +97,10 @@ onMounted(() => {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-weight: 700;
+}
+
+.header-buttons {
+  display: flex;
 }
 
 .add-transaction {

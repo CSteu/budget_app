@@ -1,20 +1,22 @@
 <template>
   <div class="card">
     <div class="header">
-      <div class="header-left">
+      <div class="header-button">
         <h4>Checking Account</h4>
-        <h1>{{ formatCurrency(currentBalance) }}</h1>
-        <h2>Current Balance</h2>
-        <h3>Average Monthly Income: {{ formatCurrency(averageIncome) }}</h3>
-        <h3>Average Monthly Expenses: {{ formatCurrency(averageExpenses) }}</h3>
+        <button @click="goToSetStartingAmount" class="edit-starting-btn">Edit starting amount</button>
       </div>
+      <h1>{{ formatCurrency(currentBalance) }}</h1>
+      <h3>Average Monthly Income: {{ formatCurrency(averageIncome) }}</h3>
+      <h3>Average Monthly Expenses: {{ formatCurrency(averageExpenses) }}</h3>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
-  inject: ['checkingData', 'spendingData', 'incomeData'],
+  inject: ['checkingData', 'transferData', 'spendingData', 'incomeData'],
   data() {
     return {
       currentMonthKey: this.getCurrentMonthKey(),
@@ -22,10 +24,10 @@ export default {
   },
   computed: {
     startingAmount() {
-      if (!this.checkingData || !Array.isArray(this.checkingData.CheckingAmount) || this.checkingData.CheckingAmount.length === 0) {
+      if (!this.checkingData || !Array.isArray(this.checkingData.checkingAmount) || this.checkingData.checkingAmount.length === 0) {
         return 0;
       }
-      const firstAccount = this.checkingData.CheckingAmount[0];
+      const firstAccount = this.checkingData.checkingAmount[0];
       return firstAccount && firstAccount.startingBalance ? parseFloat(firstAccount.startingBalance) || 0 : 0;
     },
     expenses() {
@@ -34,13 +36,24 @@ export default {
     incomes() {
       return Array.isArray(this.incomeData?.incomes) ? this.incomeData.incomes : [];
     },
+    deposits() {
+      if (!this.transferData || !Array.isArray(this.transferData.transfers)) return [];
+      return this.transferData.transfers.filter(transfer => transfer.recievingAccountId === 1);
+    },
+    withdrawals() {
+      if (!this.transferData || !Array.isArray(this.transferData.transfers)) return [];
+      return this.transferData.transfers.filter(transfer => transfer.sendingAccountId === 1);
+    },
     transactions() {
-      return [...this.expenses, ...this.incomes];
+      return [...this.deposits, ...this.withdrawals];
     },
     currentBalance() {
       const totalIncome = this.incomes.reduce((sum, income) => sum + (parseFloat(income.amount) || 0), 0);
       const totalExpenses = this.expenses.reduce((sum, expense) => sum + (parseFloat(expense.amount) || 0), 0);
-      return this.startingAmount + totalIncome - totalExpenses;
+      const totalDeposits = this.deposits.reduce((sum, deposit) => sum + (parseFloat(deposit.amount) || 0), 0);
+      const totalWithdrawals = this.withdrawals.reduce((sum, withdrawal) => sum + (parseFloat(withdrawal.amount) || 0), 0);
+      const balance = this.startingAmount + totalIncome - totalExpenses + totalDeposits - totalWithdrawals;
+      return this.roundToTwoDecimals(balance);
     },
     averageIncome() {
       if (!this.incomes.length) return 0;
@@ -74,7 +87,28 @@ export default {
     roundToTwoDecimals(value) {
       return Math.round((value + Number.EPSILON) * 100) / 100;
     },
+    async updateCurrentBalance(balance) {
+      try {
+        const accountId = 1;
+        const payload = {
+          currentBalance: balance,
+          Name: "test",
+          isChecking: true
+        };
+        await axios.put(`https://localhost:5001/api/accounts/${accountId}`, payload);
+      } catch (error) {
+        console.error('Failed to update current balance:', error);
+      }
+    }
   },
+  watch: {
+    currentBalance: {
+      handler(newBalance) {
+        this.updateCurrentBalance(newBalance);
+      },
+      immediate: true,
+    }
+  }
 }
 </script>
 
@@ -89,14 +123,17 @@ export default {
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-}
-
-.header-left {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  min-width: 25rem;
+}
+
+.header-button {
+  width: 100%;
+  display:flex;
+  justify-content: space-between;
 }
 
 .header h1 {
@@ -119,5 +156,21 @@ export default {
 .header h4 {
   color: var(--vt-c-text-dark-2);
   font-weight: 600;
+}
+
+.edit-starting-btn {
+  background-color: #ffffff;
+  color: rgb(0, 162, 199);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+  align-self: flex-start;
+}
+
+.edit-starting-btn:hover {
+  color: rgb(0, 106, 130);
 }
 </style>

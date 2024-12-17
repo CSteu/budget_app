@@ -58,7 +58,7 @@ const updateCheckingAccount = async () => {
     const response = await axios.put(`https://localhost:5001/api/accounts/1`, {
       StartingBalance: account.value.StartingBalance,
       CurrentBalance: account.value.CurrentBalance,
-      isChecking: account.value.isChecking,
+      isChecking: true,
     })
     if (response.status === 204) {
       resetForm()

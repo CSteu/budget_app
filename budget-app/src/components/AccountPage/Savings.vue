@@ -4,9 +4,8 @@
       <div class="header-left">
         <h4>Savings Account</h4>
         <h1>{{ formatCurrency(currentBalance) }}</h1>
-        <h2>Current Balance</h2>
-        <h3>Average Monthly Income: {{ formatCurrency(averageIncome) }}</h3>
-        <h3>Average Monthly Expenses: {{ formatCurrency(averageExpenses) }}</h3>
+        <h3>Average Monthly Deposits: {{ formatCurrency(averageDeposits) }}</h3>
+        <h3>Average Monthly Withdrawals: {{ formatCurrency(averageWithdrawals) }}</h3>
       </div>
     </div>
   </div>
@@ -14,7 +13,7 @@
 
 <script>
 export default {
-  inject: ['savingsData', 'spendingData', 'incomeData'],
+  inject: ['savingsData', 'transferData'],
   data() {
     return {
       currentMonthKey: this.getCurrentMonthKey(),
@@ -28,31 +27,33 @@ export default {
       const firstAccount = this.savingsData.SavingsAmount[0];
       return firstAccount && firstAccount.startingBalance ? parseFloat(firstAccount.startingBalance) || 0 : 0;
     },
-    expenses() {
-      return Array.isArray(this.spendingData?.expenses) ? this.spendingData.expenses : [];
+    deposits() {
+      if (!this.transferData || !Array.isArray(this.transferData.transfers)) return [];
+      return this.transferData.transfers.filter(transfer => transfer.recievingAccountId === 2);
     },
-    incomes() {
-      return Array.isArray(this.incomeData?.incomes) ? this.incomeData.incomes : [];
+    withdrawals() {
+      if (!this.transferData || !Array.isArray(this.transferData.transfers)) return [];
+      return this.transferData.transfers.filter(transfer => transfer.sendingAccountId === 2);
     },
     transactions() {
-      return [...this.expenses, ...this.incomes];
+      return [...this.deposits, ...this.withdrawals];
     },
     currentBalance() {
-      const totalIncome = 0
-      const totalExpenses = 0;
-      return this.startingAmount + totalIncome - totalExpenses;
+      const totalDeposits = this.deposits.reduce((sum, deposit) => sum + (parseFloat(deposit.amount) || 0), 0);
+      const totalWithdrawals = this.withdrawals.reduce((sum, withdrawal) => sum + (parseFloat(withdrawal.amount) || 0), 0);
+      return this.startingAmount + totalDeposits - totalWithdrawals;
     },
-    averageIncome() {
-      if (!this.incomes.length) return 0;
-      const totalIncome = this.incomes.reduce((sum, income) => sum + (parseFloat(income.amount) || 0), 0);
-      const uniqueMonths = new Set(this.incomes.map(income => this.formatDateToMonth(income.date)));
-      return this.roundToTwoDecimals(totalIncome / uniqueMonths.size);
+    averageDeposits() {
+      if (!this.deposits.length) return 0;
+      const totalDeposits = this.deposits.reduce((sum, deposit) => sum + (parseFloat(deposit.amount) || 0), 0);
+      const uniqueMonths = new Set(this.deposits.map(deposit => this.formatDateToMonth(deposit.date)));
+      return this.roundToTwoDecimals(totalDeposits / (uniqueMonths.size || 1)); 
     },
-    averageExpenses() {
-      if (!this.expenses.length) return 0;
-      const totalExpenses = this.expenses.reduce((sum, expense) => sum + (parseFloat(expense.amount) || 0), 0);
-      const uniqueMonths = new Set(this.expenses.map(expense => this.formatDateToMonth(expense.date)));
-      return this.roundToTwoDecimals(totalExpenses / uniqueMonths.size);
+    averageWithdrawals() {
+      if (!this.withdrawals.length) return 0;
+      const totalWithdrawals = this.withdrawals.reduce((sum, withdrawal) => sum + (parseFloat(withdrawal.amount) || 0), 0);
+      const uniqueMonths = new Set(this.withdrawals.map(withdrawal => this.formatDateToMonth(withdrawal.date)));
+      return this.roundToTwoDecimals(totalWithdrawals / (uniqueMonths.size || 1));
     },
   },
   methods: {

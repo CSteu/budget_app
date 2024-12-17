@@ -5,39 +5,61 @@ using Microsoft.AspNetCore.Mvc;
 namespace BudgetApi
 {
     [Route("api/[controller]")]
-	[ApiController]
-	public class TransfersController : ControllerBase
-	{
-		private static List<Transfer> Transfers = TransferData.Transfers;
+    [ApiController]
+    public class TransactionsController : ControllerBase
+    {
+        private static List<Transaction> Transactions = TransactionData.Transactions;
 
 
-		// GET: api/transactions
-		[HttpGet]
-		public ActionResult<IEnumerable<Transfer>> GetTransfer()
-		{
-			return Ok(Transfers);
-		}
+        // GET: api/transactions
+        [HttpGet]
+        public ActionResult<IEnumerable<Transaction>> GetTransactions()
+        {
+            return Ok(Transactions);
+        }
 
-		// POST: api/transactions
-		[HttpPost]
-		public ActionResult<Transaction> CreateTransfer([FromBody] Transfer newTransfer)
-		{
-            newTransfer.Id = Transfers.Any() ? Transfers.Max(t => t.Id) + 1 : 1;
-            Transfers.Add(newTransfer);
-			return CreatedAtAction(nameof(GetTransfer), new { id = newTransfer.Id }, newTransfer);
-		}
+        // GET: api/transactions/{id}
+        [HttpGet("{id}")]
+        public ActionResult<Transaction> GetTransaction(int id)
+        {
+            var transaction = Transactions.FirstOrDefault(t => t.Id == id);
+            if (transaction == null) return NotFound();
+            return Ok(transaction);
+        }
 
-		// PUT: api/transactions/{id}
-		[HttpPut("{id}")]
-		public IActionResult UpdateTransfer(int id, [FromBody] Transfer updatedTransfer)
-		{
-			var transaction = Transfers.FirstOrDefault(t => t.Id == id);
-			if (transaction == null) return NotFound();
+        // POST: api/transactions
+        [HttpPost]
+        public ActionResult<Transaction> CreateTransaction([FromBody] Transaction newTransaction)
+        {
+            newTransaction.Id = Transactions.Any() ? Transactions.Max(t => t.Id) + 1 : 1;
+            Transactions.Add(newTransaction);
+            return CreatedAtAction(nameof(GetTransaction), new { id = newTransaction.Id }, newTransaction);
+        }
 
-			transaction.Amount = updatedTransfer.Amount;
-			transaction.sendingAccountId = updatedTransfer.sendingAccountId;
-			transaction.recievingAccountId = updatedTransfer.recievingAccountId;
-			return NoContent();
-		}
-	}
+        // PUT: api/transactions/{id}
+        [HttpPut("{id}")]
+        public IActionResult UpdateTransaction(int id, [FromBody] Transaction updatedTransaction)
+        {
+            var transaction = Transactions.FirstOrDefault(t => t.Id == id);
+            if (transaction == null) return NotFound();
+
+            transaction.Description = updatedTransaction.Description;
+            transaction.Amount = updatedTransaction.Amount;
+            transaction.Date = updatedTransaction.Date;
+            transaction.Category = updatedTransaction.Category;
+            transaction.IsIncome = updatedTransaction.IsIncome;
+            return NoContent();
+        }
+
+        // DELETE: api/transactions/{id}
+        [HttpDelete("{id}")]
+        public IActionResult DeleteTransaction(int id)
+        {
+            var transaction = Transactions.FirstOrDefault(t => t.Id == id);
+            if (transaction == null) return NotFound();
+
+            Transactions.Remove(transaction);
+            return NoContent();
+        }
+    }
 }

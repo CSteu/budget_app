@@ -5,13 +5,16 @@ import {
   incomeData,
   savingsData,
   checkingData,
+  transferData,
   loadIncomeData,
   loadSpendingData,
   loadCheckingData,
   loadSavingsData,
+  loadTransferData,
 } from '../store/TransactionData'
 import Checking from '@/components/AccountPage/Checking.vue'
 import Savings from '@/components/AccountPage/Savings.vue'
+import TransferTable from '@/components/AccountPage/TransferTable.vue'
 
 const isLoading = ref(true)
 
@@ -19,6 +22,7 @@ provide('spendingData', spendingData)
 provide('incomeData', incomeData)
 provide('savingsData', savingsData)
 provide('checkingData', checkingData)
+provide('transferData', transferData)
 
 const refreshData = async () => {
   try {
@@ -26,6 +30,7 @@ const refreshData = async () => {
     await loadIncomeData()
     await loadCheckingData()
     await loadSavingsData()
+    await loadTransferData()
     console.log(checkingData)
   } catch (error) {
     console.error('Error loading data', error)
@@ -46,17 +51,28 @@ onMounted(() => {
         <i class="pi pi-wallet header-icon"></i>
         <h1>Account Overview</h1>
       </div>
-      <router-link to="/starting-value">
-        <button class="add-transaction">
-          <i class="pi pi-plus" style="margin-right: 0.5rem"></i>
-          Add Starting Values
-        </button>
-      </router-link>
+      <div class="header-buttons">
+        <router-link to="/">
+          <button class="add-transaction">
+            <i style="margin-right: 0.5rem"></i>
+            Spending Insights
+          </button>
+        </router-link>
+        <router-link to="/transfer">
+          <button class="add-transaction">
+            <i class="pi pi-arrow-right-arrow-left" style="margin-right: 0.5rem"></i>
+            Transfer Funds
+          </button>
+        </router-link>
+      </div>
     </div>
 
-    <div class="content">
-      <Checking />
-      <Savings />
+    <div class="contents">
+      <div class="accounts">
+        <Checking />
+        <Savings />
+      </div>
+      <TransferTable />
     </div>
   </main>
 </template>
@@ -70,6 +86,7 @@ onMounted(() => {
   background: linear-gradient(90deg, #03045e, #023e8a, #0077b6, #0096c7, #00b4d8);
   border-radius: 0 0 16px 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 72rem;
 }
 
 .header-title {
@@ -89,6 +106,10 @@ onMounted(() => {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-weight: 700;
+}
+
+.header-buttons {
+  display:flex;
 }
 
 .add-transaction {
@@ -115,8 +136,14 @@ onMounted(() => {
   box-shadow: none;
 }
 
-.content {
-  padding: 2rem;
+.contents {
+  display: flex;
+  flex-direction: column;
+}
+
+.accounts {
+  display: flex;
+  gap: 1rem;
 }
 
 </style>
