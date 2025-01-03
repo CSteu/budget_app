@@ -1,46 +1,78 @@
-﻿using BudgetApi.Data;
-using BudgetApi.Models;
+﻿using BudgetApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BudgetApi
 {
-    [Route("api/[controller]")]
+	[Route("api/[controller]")]
 	[ApiController]
 	public class AccountsController : ControllerBase
 	{
-		private static List<Account> Accounts = AccountData.Accounts;
+		private readonly BudgetDbContext _context;
 
-
-		// GET: api/Account
-		[HttpGet]
-		public ActionResult<IEnumerable<Account>> GetAccounts()
+		public AccountsController(BudgetDbContext context)
 		{
-			return Ok(Accounts);
+			_context = context;
 		}
 
+		// GET: api/Accounts
+		[HttpGet]
+		public async Task<ActionResult<IEnumerable<Account>>> GetAccounts()
+		{
+			var accounts = await _context.Accounts.ToListAsync();
+			return Ok(accounts);
+		}
 
 		// POST: api/Accounts
 		[HttpPost]
-		public ActionResult<Account> CreateAccount([FromBody] Account newAccount)
+		public async Task<ActionResult<Account>> CreateAccount([FromBody] Account newAccount)
 		{
-            newAccount.Id = Accounts.Any() ? Accounts.Max(t => t.Id) + 1 : 1;
-			Accounts.Add(newAccount);
+			_context.Accounts.Add(newAccount);
+			await _context.SaveChangesAsync();
+
 			return CreatedAtAction(nameof(GetAccounts), new { id = newAccount.Id }, newAccount);
 		}
 
-        // PUT: api/Accounts/{id}
-        [HttpPut("{id}")]
-        public ActionResult UpdateAccount(int id, [FromBody] Account updatedAccount)
-        {
-            var existingAccount = Accounts.FirstOrDefault(account => account.Id == id);
-            if (existingAccount == null)
-            {
-                return NotFound();
-            }
+		// PUT: api/Accounts/{id}
+		[HttpPut("{id}")]
+		public async Task<IActionResult> UpdateAccount(int id, [FromBody] Account updatedAccount)
+		{
+			if (id != updatedAccount.Id)
+			{
+				return BadRequest();
+			}
 
-            existingAccount.CurrentBalance = updatedAccount.CurrentBalance;
-            existingAccount.isChecking = updatedAccount.isChecking;
-            return NoContent();
-        }
-    }
+			var existingAccount = await _context.Accounts.FindAsync(id);
+			if (existingAccount == null)
+			{
+				return NotFound();
+			}
+
+			existingAccount.CurrentBalance = updatedAccount.CurrentBalance;
+			existingAccount.IsChecking = updatedAccount.IsChecking;
+
+			try
+			{
+				await _context.SaveChangesAsync();
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				if (!AccountExists(id))
+				{
+					return NotFound();
+				}
+				else
+				{
+					throw;
+				}
+			}
+
+			return NoContent();
+		}
+
+		private bool AccountExists(int id)
+		{
+			return _context.Accounts.Any(e => e.Id == id);
+		}
+	}
 }

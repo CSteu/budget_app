@@ -1,65 +1,102 @@
-﻿using BudgetApi.Data;
-using BudgetApi.Models;
+﻿using BudgetApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BudgetApi
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TransactionsController : ControllerBase
-    {
-        private static List<Transaction> Transactions = TransactionData.Transactions;
+	[Route("api/[controller]")]
+	[ApiController]
+	public class TransactionsController : ControllerBase
+	{
+		private readonly BudgetDbContext _context;
 
+		public TransactionsController(BudgetDbContext context)
+		{
+			_context = context;
+		}
 
-        // GET: api/transactions
-        [HttpGet]
-        public ActionResult<IEnumerable<Transaction>> GetTransactions()
-        {
-            return Ok(Transactions);
-        }
+		// GET: api/transactions
+		[HttpGet]
+		public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions()
+		{
+			var transactions = await _context.Transactions.ToListAsync();
+			return Ok(transactions);
+		}
 
-        // GET: api/transactions/{id}
-        [HttpGet("{id}")]
-        public ActionResult<Transaction> GetTransaction(int id)
-        {
-            var transaction = Transactions.FirstOrDefault(t => t.Id == id);
-            if (transaction == null) return NotFound();
-            return Ok(transaction);
-        }
+		// GET: api/transactions/{id}
+		[HttpGet("{id}")]
+		public async Task<ActionResult<Transaction>> GetTransaction(int id)
+		{
+			var transaction = await _context.Transactions.FindAsync(id);
 
-        // POST: api/transactions
-        [HttpPost]
-        public ActionResult<Transaction> CreateTransaction([FromBody] Transaction newTransaction)
-        {
-            newTransaction.Id = Transactions.Any() ? Transactions.Max(t => t.Id) + 1 : 1;
-            Transactions.Add(newTransaction);
-            return CreatedAtAction(nameof(GetTransaction), new { id = newTransaction.Id }, newTransaction);
-        }
+			if (transaction == null)
+			{
+				return NotFound();
+			}
 
-        // PUT: api/transactions/{id}
-        [HttpPut("{id}")]
-        public IActionResult UpdateTransaction(int id, [FromBody] Transaction updatedTransaction)
-        {
-            var transaction = Transactions.FirstOrDefault(t => t.Id == id);
-            if (transaction == null) return NotFound();
+			return Ok(transaction);
+		}
 
-            transaction.Description = updatedTransaction.Description;
-            transaction.Amount = updatedTransaction.Amount;
-            transaction.Date = updatedTransaction.Date;
-            transaction.Category = updatedTransaction.Category;
-            transaction.IsIncome = updatedTransaction.IsIncome;
-            return NoContent();
-        }
+		// POST: api/transactions
+		[HttpPost]
+		public async Task<ActionResult<Transaction>> CreateTransaction([FromBody] Transaction newTransaction)
+		{
+			_context.Transactions.Add(newTransaction);
+			await _context.SaveChangesAsync();
 
-        // DELETE: api/transactions/{id}
-        [HttpDelete("{id}")]
-        public IActionResult DeleteTransaction(int id)
-        {
-            var transaction = Transactions.FirstOrDefault(t => t.Id == id);
-            if (transaction == null) return NotFound();
+			return CreatedAtAction(nameof(GetTransaction), new { id = newTransaction.Id }, newTransaction);
+		}
 
-            Transactions.Remove(transaction);
-            return NoContent();
-        }
-    }
+		// PUT: api/transactions/{id}
+		[HttpPut("{id}")]
+		public async Task<IActionResult> UpdateTransaction(int id, [FromBody] Transaction updatedTransaction)
+		{
+			if (id != updatedTransaction.Id)
+			{
+				return BadRequest();
+			}
+
+			_context.Entry(updatedTransaction).State = EntityState.Modified;
+
+			try
+			{
+				await _context.SaveChangesAsync();
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				if (!TransactionExists(id))
+				{
+					return NotFound();
+				}
+				else
+				{
+					throw;
+				}
+			}
+
+			return NoContent();
+		}
+
+		// DELETE: api/transactions/{id}
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> DeleteTransaction(int id)
+		{
+			var transaction = await _context.Transactions.FindAsync(id);
+
+			if (transaction == null)
+			{
+				return NotFound();
+			}
+
+			_context.Transactions.Remove(transaction);
+			await _context.SaveChangesAsync();
+
+			return NoContent();
+		}
+
+		private bool TransactionExists(int id)
+		{
+			return _context.Transactions.Any(e => e.Id == id);
+		}
+	}
 }

@@ -11,8 +11,8 @@ namespace BudgetApi.Data
     {
         public static List<Account> Accounts = new List<Account>
         {
-            new Account {Id = 1, Name = "Checking Account", StartingBalance = 1000, CurrentBalance = 1000, isChecking = true},
-            new Account {Id = 2, Name = "Savings Account", StartingBalance = 5000, CurrentBalance = 5000, isChecking = false}
+            new Account {Id = 1, Name = "Checking Account", StartingBalance = 1000, CurrentBalance = 1000, IsChecking = true},
+            new Account {Id = 2, Name = "Savings Account", StartingBalance = 5000, CurrentBalance = 5000, IsChecking = false}
         };
     }
 }

@@ -62,7 +62,7 @@ onMounted(() => {
       <div class="right-column">
         <SpendingCategories />
         <RecurrentSpending />
-        <KanyeRest />
+        <!-- <KanyeRest /> -->
       </div>
     </div>
   </main>

@@ -1,3 +1,5 @@
+
+import path from 'path';
 import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
@@ -10,6 +12,10 @@ export default defineConfig({
     vue(),
     vueDevTools(),
   ],
+  build: {
+    outDir: path.resolve(__dirname, '../BudgetApi/Practice/wwwroot'),
+    emptyOutDir: true, 
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
