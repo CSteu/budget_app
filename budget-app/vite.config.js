@@ -13,7 +13,7 @@ export default defineConfig({
     vueDevTools(),
   ],
   build: {
-    outDir: path.resolve(__dirname, '../BudgetApi/Practice/wwwroot'),
+    outDir: path.resolve(__dirname, '../BudgetApi/BudgetApi/wwwroot'),
     emptyOutDir: true, 
   },
   resolve: {
