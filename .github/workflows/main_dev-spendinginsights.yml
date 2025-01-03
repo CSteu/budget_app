@@ -39,15 +39,15 @@ jobs:
 
       # 5) Restore NuGet packages (optional but recommended)
       - name: Restore .NET
-        run: dotnet restore .\BudgetApi\Practice\BudgetApi.csproj
+        run: dotnet restore .\BudgetApi\BudgetApi\BudgetApi.csproj
 
       # 6) Build .NET
       - name: Build .NET project
-        run: dotnet build .\BudgetApi\Practice\BudgetApi.csproj --configuration Release
+        run: dotnet build .\BudgetApi\BudgetApi\BudgetApi.csproj --configuration Release
 
       # 7) Publish .NET
       - name: Publish .NET project
-        run: dotnet publish .\BudgetApi\Practice\BudgetApi.csproj --configuration Release --output .\publish
+        run: dotnet publish .\BudgetApi\BudgetApi\BudgetApi.csproj --configuration Release --output .\publish
 
       # 8) Upload artifact
       - name: Upload artifact for deployment job
