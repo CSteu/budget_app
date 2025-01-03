@@ -14,12 +14,11 @@ jobs:
       # 1) Check out the code
       - uses: actions/checkout@v4
 
-      # 2) (Optional) Set up Node to build Vue
-      # If you do not need to build a frontend, you can skip these steps.
+      # 2) Set up Node for Vue
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
-          node-version: '16'  # or whatever Node version you need
+          node-version: '16'  # Use the Node.js version you need
 
       - name: Install NPM dependencies (Vue)
         working-directory: budget-app
@@ -28,23 +27,22 @@ jobs:
       - name: Build Vue
         working-directory: budget-app
         run: npm run build
-        # The output from this build should go to MyProject.Api/wwwroot 
+        # The output from this build should go to BudgetApi/wwwroot 
         # if vue.config.js is configured properly.
 
-      # 3) Set up .NET
+      # 3) Set up .NET Core
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.x'  # .NET 9 preview or your required version
+          dotnet-version: '9.x'  # Use the .NET version you need
 
-      # 4) Build the .NET solution
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      # 4) Build the .NET project
+      - name: Build .NET project
+        run: dotnet build --configuration Release ./BudgetApi/Practice/BudgetApi.csproj
 
       # 5) Publish the .NET project
-      - name: dotnet publish
-        # This publishes everything (including your Vue files in wwwroot) to a folder for deployment
-        run: dotnet publish ./BudgetApi -c Release -o "${{ env.DOTNET_ROOT }}/myapp"
+      - name: Publish .NET project
+        run: dotnet publish ./BudgetApi/Practice/BudgetApi.csproj -c Release -o "${{ env.DOTNET_ROOT }}/myapp"
 
       # 6) Upload artifact for deployment job
       - name: Upload artifact for deployment job
@@ -60,7 +58,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write  # required for requesting the JWT
+      id-token: write  # Required for requesting the JWT
 
     steps:
       # 1) Download the .NET publish artifact from the build job
