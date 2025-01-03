@@ -58,7 +58,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write  # Required for requesting the JWT
+      id-token: write
 
     steps:
       # 1) Download the .NET publish artifact from the build job
@@ -82,5 +82,4 @@ jobs:
         with:
           app-name: 'dev-spendinginsights'
           slot-name: 'Production'
-          # Point "package" to the folder that has the final .NET publish output
-          package: ./.net-app
+          package: ./publish
