@@ -71,7 +71,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-          path: .  # puts files under ./publish
+          path: ./publish  # <--- Download artifact INTO the "publish" folder
 
       # 2) Login to Azure
       - name: Login to Azure
@@ -88,4 +88,5 @@ jobs:
         with:
           app-name: 'dev-spendinginsights'
           slot-name: 'Production'
-          package: .\publish
+          package: ./publish  # <--- Points to the same "publish" folder
+
