@@ -41,9 +41,8 @@ jobs:
       - name: Build & Publish .NET project
         run: |
           dotnet build --configuration Release ./BudgetApi/Practice/BudgetApi.csproj
-          dotnet publish ./BudgetApi/Practice/BudgetApi.csproj \
-            -c Release \
-            -o ./publish
+          dotnet publish ./BudgetApi/Practice/BudgetApi.csproj --configuration Release --output ./publish
+
 
       # 6) Upload the publish folder as artifact
       - name: Upload artifact for deployment job
