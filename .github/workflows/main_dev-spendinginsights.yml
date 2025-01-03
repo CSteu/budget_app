@@ -14,12 +14,13 @@ jobs:
       # 1) Check out the code
       - uses: actions/checkout@v4
 
-      # 2) Set up Node for Vue
+      # 2) Set up Node for Vue (if needed)
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
-          node-version: '16'  # Use the Node.js version you need
+          node-version: '16'
 
+      # 3) Install & Build Vue
       - name: Install NPM dependencies (Vue)
         working-directory: budget-app
         run: npm install
@@ -27,29 +28,29 @@ jobs:
       - name: Build Vue
         working-directory: budget-app
         run: npm run build
-        # The output from this build should go to BudgetApi/wwwroot 
-        # if vue.config.js is configured properly.
+        # If vue.config.js is set to output to ../BudgetApi/wwwroot,
+        # the Vue build ends up in your .NET wwwroot folder.
 
-      # 3) Set up .NET Core
+      # 4) Set up .NET
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.x'  # Use the .NET version you need
+          dotnet-version: '9.x'
 
-      # 4) Build the .NET project
-      - name: Build .NET project
-        run: dotnet build --configuration Release ./BudgetApi/Practice/BudgetApi.csproj
+      # 5) Build & Publish .NET project
+      - name: Build & Publish .NET project
+        run: |
+          dotnet build --configuration Release ./BudgetApi/Practice/BudgetApi.csproj
+          dotnet publish ./BudgetApi/Practice/BudgetApi.csproj \
+            -c Release \
+            -o ./publish
 
-      # 5) Publish the .NET project
-      - name: Publish .NET project
-        run: dotnet publish ./BudgetApi/Practice/BudgetApi.csproj -c Release -o "${{ env.DOTNET_ROOT }}/myapp"
-
-      # 6) Upload artifact for deployment job
+      # 6) Upload the publish folder as artifact
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{ env.DOTNET_ROOT }}/myapp
+          path: ./publish
 
   deploy:
     runs-on: windows-latest
@@ -61,11 +62,13 @@ jobs:
       id-token: write
 
     steps:
-      # 1) Download the .NET publish artifact from the build job
+      # 1) Download the artifact from the build job
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: .net-app
+          path: .
+          # This will place the contents of the artifact into ./publish
 
       # 2) Login to Azure
       - name: Login to Azure
@@ -82,4 +85,4 @@ jobs:
         with:
           app-name: 'dev-spendinginsights'
           slot-name: 'Production'
-          package: ./publish
+          package: './publish'
