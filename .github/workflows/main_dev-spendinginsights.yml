@@ -1,0 +1,91 @@
+name: Build and deploy ASP.Net Core app to Azure Web App - dev-spendinginsights
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      # 1) Check out the code
+      - uses: actions/checkout@v4
+
+      # 2) Set up Node for Vue
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      # 3) Install & Build Vue
+      - name: Install NPM dependencies (Vue)
+        working-directory: budget-app
+        run: npm install
+
+      - name: Build Vue
+        working-directory: budget-app
+        run: npm run build
+        # If vue.config.js -> outputDir: ../BudgetApi/wwwroot
+        # then your compiled Vue files go into BudgetApi/wwwroot.
+
+      # 4) Set up .NET
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+
+      # 5) Restore NuGet packages (optional but recommended)
+      - name: Restore .NET
+        run: dotnet restore .\BudgetApi\Practice\BudgetApi.csproj
+
+      # 6) Build .NET
+      - name: Build .NET project
+        run: dotnet build .\BudgetApi\Practice\BudgetApi.csproj --configuration Release
+
+      # 7) Publish .NET
+      - name: Publish .NET project
+        run: dotnet publish .\BudgetApi\Practice\BudgetApi.csproj --configuration Release --output .\publish
+
+      # 8) Upload artifact
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          path: .\publish
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write
+
+    steps:
+      # 1) Download the published artifact
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+          path: .  # puts files under ./publish
+
+      # 2) Login to Azure
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_CA2262A82C1648A09DB89B4D0E819616 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_ECC96ED487F34812A7A516F6FD167E08 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_012C3F9BFF394490B3408C8958122D95 }}
+
+      # 3) Deploy to Azure Web App
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'dev-spendinginsights'
+          slot-name: 'Production'
+          package: .\publish
