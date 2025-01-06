@@ -65,12 +65,12 @@ export default {
   methods: {
     updateFilteredTransactions() {
       const now = new Date();
-      const startOfDecember = new Date(now.getFullYear(), 11, 1);
-      const endOfDecember = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(now.getDate() - 30);
 
       this.filteredTransactions = this.transactions.filter((transaction) => {
         const transactionDate = new Date(transaction.date);
-        return transactionDate >= startOfDecember && transactionDate <= endOfDecember;
+        return transactionDate >= thirtyDaysAgo && transactionDate <= now;
       });
 
       this.filteredTransactions.sort(
@@ -93,7 +93,7 @@ export default {
           transaction.formattedDate = currentDate;
           lastFormattedDate = currentDate;
         } else {
-          transaction.formattedDate = ''; // Hide the date for duplicate entries on the same day
+          transaction.formattedDate = '';
         }
       });
     },

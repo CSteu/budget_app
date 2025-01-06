@@ -9,6 +9,7 @@ lerna-debug.log*
 
 # Dependency directories
 node_modules
+bower_components/
 
 # macOS system files
 .DS_Store
@@ -16,12 +17,16 @@ node_modules
 # Build output
 dist
 dist-ssr
+bin/
+obj/
 
 # Test coverage
 coverage
 
 # Local environment files
 *.local
+.env
+.env.*
 
 # Cypress files
 /cypress/videos/
@@ -35,6 +40,8 @@ coverage
 *.ntvs*
 *.njsproj
 *.sw?
+*.iml
+*.sln.ide
 
 # Visual Studio-specific files
 .vs/
@@ -45,10 +52,47 @@ coverage
 
 # Visual Studio Solution and Project files
 *.sln.ide
+*.sln.docstates
 
 # TypeScript build information
 *.tsbuildinfo
 
-# Exclude build artifacts
-bin/
-obj/
+# Entity Framework migrations
+**/Migrations/
+
+# Azure
+.azure/
+local.settings.json
+*.PublishSettings
+pubxml/
+*.pubxml.user
+
+# ASP.NET Core specific
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Rider IDE files
+.idea/
+*.sln.iml
+
+# npm packages
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs and databases
+*.log
+*.ldb
+
+# Configuration files
+appsettings.Development.json
+appsettings.Local.json
+appsettings.Test.json
+
+# Windows specific
+Thumbs.db
+Desktop.ini
+
+# Linux specific
+*~
