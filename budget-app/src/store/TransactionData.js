@@ -1,7 +1,7 @@
 import { reactive } from 'vue';
 import axios from 'axios';
 
-const apiBaseUrl = "https://localhost:5001/api";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const loadSavingsFromAPI = async () => {
   try {
