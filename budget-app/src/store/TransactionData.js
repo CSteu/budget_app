@@ -1,12 +1,11 @@
 import { reactive } from 'vue';
-import axios from 'axios';
+import api from '@/api/api';
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-
+// Load savings data from the API
 const loadSavingsFromAPI = async () => {
   try {
-    const response = await axios.get(`${apiBaseUrl}/accounts`);
-    return response.data.filter(accounts => !accounts.isChecking);
+    const response = await api.get('/accounts');
+    return response.data.filter((account) => !account.isChecking);
   } catch (error) {
     console.error('Error loading savings data from API:', error);
     return [];
@@ -14,7 +13,7 @@ const loadSavingsFromAPI = async () => {
 };
 
 export const savingsData = reactive({
-  SavingsAmount: []
+  SavingsAmount: [],
 });
 
 export const loadSavingsData = async () => {
@@ -23,10 +22,11 @@ export const loadSavingsData = async () => {
 
 loadSavingsData();
 
+// Load checking data from the API
 const loadCheckingFromAPI = async () => {
   try {
-    const response = await axios.get(`${apiBaseUrl}/accounts`);
-    return response.data.filter(accounts => accounts.isChecking);
+    const response = await api.get('/accounts');
+    return response.data.filter((account) => account.isChecking);
   } catch (error) {
     console.error('Error loading checking data from API:', error);
     return [];
@@ -34,7 +34,7 @@ const loadCheckingFromAPI = async () => {
 };
 
 export const checkingData = reactive({
-  CheckingAmount: []
+  CheckingAmount: [],
 });
 
 export const loadCheckingData = async () => {
@@ -46,8 +46,8 @@ loadCheckingData();
 // Load spending data from the API
 const loadSpendingFromAPI = async () => {
   try {
-    const response = await axios.get(`${apiBaseUrl}/transactions`);
-    return response.data.filter(transaction => !transaction.isIncome);
+    const response = await api.get('/transactions');
+    return response.data.filter((transaction) => !transaction.isIncome);
   } catch (error) {
     console.error('Error loading spending data from API:', error);
     return [];
@@ -55,7 +55,7 @@ const loadSpendingFromAPI = async () => {
 };
 
 export const spendingData = reactive({
-  expenses: []
+  expenses: [],
 });
 
 export const loadSpendingData = async () => {
@@ -67,8 +67,8 @@ loadSpendingData();
 // Load income data from the API
 const loadIncomeFromAPI = async () => {
   try {
-    const response = await axios.get(`${apiBaseUrl}/transactions`);
-    return response.data.filter(transaction => transaction.isIncome);
+    const response = await api.get('/transactions');
+    return response.data.filter((transaction) => transaction.isIncome);
   } catch (error) {
     console.error('Error loading income data from API:', error);
     return [];
@@ -76,7 +76,7 @@ const loadIncomeFromAPI = async () => {
 };
 
 export const incomeData = reactive({
-  incomes: []
+  incomes: [],
 });
 
 export const loadIncomeData = async () => {
@@ -85,9 +85,10 @@ export const loadIncomeData = async () => {
 
 loadIncomeData();
 
+// Load transfers data from the API
 const loadTransfersFromAPI = async () => {
   try {
-    const response = await axios.get(`${apiBaseUrl}/Transfers`);
+    const response = await api.get('/transfers');
     return response.data;
   } catch (error) {
     console.error('Error loading transfers data from API:', error);
@@ -96,24 +97,24 @@ const loadTransfersFromAPI = async () => {
 };
 
 export const transferData = reactive({
-  transfers: []
+  transfers: [],
 });
 
 export const loadTransferData = async () => {
   transferData.transfers = await loadTransfersFromAPI();
 };
 
-loadIncomeData();
+loadTransferData();
 
-// Post new spending data to the API
+// Add new spending data to the API
 export const addSpending = async (newSpending) => {
   try {
-    const response = await axios.post(`${apiBaseUrl}/transactions`, {
+    const response = await api.post('/transactions', {
       description: newSpending.description,
       amount: newSpending.amount,
       date: newSpending.date,
       category: newSpending.category,
-      isIncome: false
+      isIncome: false,
     });
     spendingData.expenses.push(response.data);
   } catch (error) {
@@ -121,15 +122,15 @@ export const addSpending = async (newSpending) => {
   }
 };
 
-// Post new income data to the API
+// Add new income data to the API
 export const addIncome = async (newIncome) => {
   try {
-    const response = await axios.post(`${apiBaseUrl}/transactions`, {
+    const response = await api.post('/transactions', {
       description: newIncome.description,
       amount: newIncome.amount,
       date: newIncome.date,
       category: newIncome.category,
-      isIncome: true
+      isIncome: true,
     });
     incomeData.incomes.push(response.data);
   } catch (error) {
@@ -137,25 +138,27 @@ export const addIncome = async (newIncome) => {
   }
 };
 
+// Add new savings data to the API
 export const addSaving = async (newSaving) => {
   try {
-    const response = await axios.post(`${apiBaseUrl}/accounts`, {
+    const response = await api.post('/accounts', {
       amount: newSaving.amount,
-      isChecking: false
+      isChecking: false,
     });
-    savingsData.SavingsAmount = response.data;
+    savingsData.SavingsAmount.push(response.data);
   } catch (error) {
     console.error('Error adding new savings to API:', error);
   }
 };
 
+// Add new checking data to the API
 export const addChecking = async (newChecking) => {
   try {
-    const response = await axios.post(`${apiBaseUrl}/accounts`, {
+    const response = await api.post('/accounts', {
       amount: newChecking.amount,
-      isChecking: true
+      isChecking: true,
     });
-    checkingData.CheckingAmount = response.data;
+    checkingData.CheckingAmount.push(response.data);
   } catch (error) {
     console.error('Error adding new checking to API:', error);
   }
