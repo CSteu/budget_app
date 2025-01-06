@@ -59,15 +59,15 @@
 import { ref, defineEmits, onMounted } from "vue";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
-import axios from "axios";
+import { addIncome } from "@/store/TransactionData";
 
 const emits = defineEmits(["submitted"]);
 
 const getTodayDate = () => {
   const today = new Date();
   const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
 
@@ -78,22 +78,16 @@ const transaction = ref({
   category: "Income",
 });
 
-
 const addNewIncome = async () => {
   try {
-    const response = await axios.post(`https://localhost:5001/api/transactions`, {
+    await addIncome({
       description: transaction.value.description,
       amount: transaction.value.amount,
       date: transaction.value.date,
       category: transaction.value.category,
-      isIncome: true
     });
-    if (response.status === 201) {
-      resetForm();
-      emits("submitted");
-    } else {
-      console.error("Failed to add income transaction", response);
-    }
+    resetForm();
+    emits("submitted");
   } catch (error) {
     console.error("Error adding income transaction:", error);
   }

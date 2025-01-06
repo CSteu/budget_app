@@ -62,65 +62,60 @@
 </template>
 
 <script setup>
-import { ref, defineEmits, onMounted } from 'vue'
-import InputText from 'primevue/inputtext'
-import Dropdown from 'primevue/dropdown'
-import InputNumber from 'primevue/inputnumber'
-import axios from 'axios'
-
-const emits = defineEmits(['submitted'])
+import { ref, defineEmits, onMounted } from "vue";
+import InputText from "primevue/inputtext";
+import Dropdown from "primevue/dropdown";
+import InputNumber from "primevue/inputnumber";
+import { addSpending } from "@/store/TransactionData"; 
+const emits = defineEmits(["submitted"]);
 
 const getTodayDate = () => {
   const today = new Date();
   const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
 
 const transaction = ref({
   date: getTodayDate(),
-  description: '',
+  description: "",
   category: null,
   amount: null,
-})
+});
 
 const categories = [
-  { name: 'Food', value: 'Food' },
-  { name: 'Transport', value: 'Transport' },
-  { name: 'Entertainment', value: 'Entertainment' },
-  { name: 'Health', value: 'Health' },
-  { name: 'Bills', value: 'Bills' },
-  { name: 'Groceries', value: 'Groceries' },
-  { name: 'Shopping', value: 'Shopping' },
-  { name: 'Subscriptions', value: 'Subscriptions' },
-  { name: 'Dining', value: 'Dining' },
-  { name: 'Education', value: 'Education' },
-  { name: 'Other', value: 'Other' }
-]
+  { name: "Food", value: "Food" },
+  { name: "Transport", value: "Transport" },
+  { name: "Entertainment", value: "Entertainment" },
+  { name: "Health", value: "Health" },
+  { name: "Bills", value: "Bills" },
+  { name: "Groceries", value: "Groceries" },
+  { name: "Shopping", value: "Shopping" },
+  { name: "Subscriptions", value: "Subscriptions" },
+  { name: "Dining", value: "Dining" },
+  { name: "Education", value: "Education" },
+  { name: "Other", value: "Other" },
+];
 
 const addNewSpending = async () => {
   try {
-    const response = await axios.post(`https://localhost:5001/api/transactions`, { ...transaction.value })
-    if (response.status === 201) {
-      resetForm()
-      emits('submitted')
-    } else {
-      console.error('Failed to add transaction', response)
-    }
+    await addSpending({ ...transaction.value });
+    resetForm();
+    emits("submitted");
   } catch (error) {
-    console.error('Error adding transaction:', error)
+    console.error("Error adding spending transaction:", error);
   }
-}
+};
 
 const resetForm = () => {
   transaction.value = {
     date: getTodayDate(),
-    description: '',
+    description: "",
     category: null,
     amount: null,
-  }
-}
+  };
+};
 
 onMounted(() => {
   transaction.value.date = getTodayDate();
@@ -183,7 +178,7 @@ onMounted(() => {
 }
 
 .p-select-option {
-  background-color: white ;
+  background-color: white;
   color: black;
 }
 </style>
