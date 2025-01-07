@@ -73,6 +73,10 @@ namespace BudgetApi.Migrations
                     b.Property<bool>("IsIncome")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Transactions");

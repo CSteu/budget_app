@@ -3,8 +3,9 @@ import { provide, onMounted } from 'vue'
 import {
   spendingData,
   incomeData,
+  loadIncomeData,
+  loadSpendingData,
 } from '../store/ApiConnections'
-import { refreshData } from '../store/ApiConnections'
 
 import ExpenseTracker from '../components/SpendingInsights/TransactionTable.vue'
 import IncomeExpenseBarChart from '@/components/SpendingInsights/IncomeExpenseBarChart.vue'
@@ -12,9 +13,15 @@ import SpendingLineChart from '@/components/SpendingInsights/SpendingLineChart.v
 import SpendingCategories from '@/components/SpendingInsights/SpendingCategories.vue'
 import RecurrentSpending from '@/components/SpendingInsights/RecurrentSpending.vue'
 import KanyeRest from '@/components/SpendingInsights/KanyeRest.vue'
+import CSVUploadAndPreview from '@/components/ImportTransactions/CSVUploadAndPreview.vue'
 
 provide('spendingData', spendingData)
 provide('incomeData', incomeData)
+
+const refreshData = async () => {
+  await loadSpendingData()
+  await loadIncomeData()
+}
 
 onMounted(() => {
   refreshData()
@@ -26,44 +33,11 @@ onMounted(() => {
     <div class="header">
       <div class="header-title">
         <i class="pi pi-chart-line header-icon"></i>
-        <h1>Spending Insights</h1>
-      </div>
-      <div class="header-buttons">
-        <router-link to="/import">
-          <button class="add-transaction">
-            <i class="pi pi-upload" style="margin-right: 0.5rem"></i>
-            Import
-          </button>
-        </router-link>
-        <router-link to="/accounts">
-          <button class="add-transaction">
-            <i  style="margin-right: 0.5rem"></i>
-            View Accounts
-          </button>
-        </router-link>
-        <router-link to="/add-spending">
-          <button class="add-transaction">
-            <i class="pi pi-plus" style="margin-right: 0.5rem"></i>
-            Add New Transaction
-          </button>
-        </router-link>
+        <h1>Import Transactions</h1>
       </div>
     </div>
-
     <div class="wrapper">
-      <!-- Left Column -->
-      <div class="left-column">
-        <!-- Include the components you want in the left column -->
-        <SpendingLineChart />
-        <IncomeExpenseBarChart />
-        <ExpenseTracker />
-      </div>
-      <!-- Right Column -->
-      <div class="right-column">
-        <SpendingCategories />
-        <RecurrentSpending />
-        <!-- <KanyeRest /> -->
-      </div>
+      <CSVUploadAndPreview/>
     </div>
   </main>
 </template>
@@ -133,14 +107,7 @@ onMounted(() => {
 .wrapper {
   display: flex;
   width: 75vw;
+  justify-content: center;
 }
 
-.left-column {
-  width: 65%;
-  margin-right: 1rem;
-}
-
-.right-column {
-  width: 35%;
-}
 </style>

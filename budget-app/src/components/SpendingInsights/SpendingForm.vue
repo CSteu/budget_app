@@ -66,7 +66,7 @@ import { ref, defineEmits, onMounted } from "vue";
 import InputText from "primevue/inputtext";
 import Dropdown from "primevue/dropdown";
 import InputNumber from "primevue/inputnumber";
-import { addSpending } from "@/store/TransactionData"; 
+import { addSpending } from "@/store/ApiConnections"; 
 const emits = defineEmits(["submitted"]);
 
 const getTodayDate = () => {

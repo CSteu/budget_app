@@ -49,6 +49,11 @@ const router = createRouter({
       path: '/transfer',
       name: 'Transfer',
       component: () => import ('../components/AccountPage/TransferForm.vue'),
+    },
+    {
+      path: '/import',
+      name: 'Import',
+      component: () => import ('../views/ImportTransactionsView.vue'),
     }
   ],
 })

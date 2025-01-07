@@ -59,7 +59,7 @@
 import { ref, defineEmits, onMounted } from "vue";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
-import { addIncome } from "@/store/TransactionData";
+import { addIncome } from "@/store/ApiConnections";
 
 const emits = defineEmits(["submitted"]);
 

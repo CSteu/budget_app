@@ -16,5 +16,6 @@ namespace BudgetApi.Models
         public DateTime Date { get; set; }
         public string Category { get; set; } = string.Empty;
         public bool IsIncome { get; set; }
-    }
+        public string Type { get; set; } = string.Empty;
+	}
 }

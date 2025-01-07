@@ -11,7 +11,7 @@ import {
   loadCheckingData,
   loadSavingsData,
   loadTransferData,
-} from '../store/TransactionData'
+} from '../store/ApiConnections'
 import Checking from '@/components/AccountPage/Checking.vue'
 import Savings from '@/components/AccountPage/Savings.vue'
 import TransferTable from '@/components/AccountPage/TransferTable.vue'

@@ -74,8 +74,8 @@ const formatCurrency = (value) => {
 const calculateTopCategories = () => {
   const expenses = Array.isArray(spendingData?.expenses) ? spendingData.expenses : [];
   const today = new Date();
-  const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-  const nextMonthStart = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+  const currentMonthStart = new Date(today.getFullYear(), today.getMonth()-1, 1);
+  const nextMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
   const currentMonthExpenses = expenses.filter((expense) => {
     const expenseDate = new Date(expense.date);

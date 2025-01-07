@@ -16,6 +16,10 @@ namespace BudgetApi.Models
 			base.OnModelCreating(modelBuilder);
 
 			modelBuilder.Entity<Transfer>().HasData(TransferData.Transfers);
+
+			modelBuilder.Entity<Transaction>()
+				.Property(t => t.Type)
+				.HasConversion<string>();
 		}
 	}
 }
