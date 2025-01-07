@@ -42,7 +42,9 @@ const totalSpending = computed(() => {
     .reduce((total, expense) => total + expense.amount, 0);
 });
 
-const leftToSpend = computed(() => Math.max(targetSpending.value - totalSpending.value, 0));
+const leftToSpend = computed(() =>
+  Math.max(targetSpending.value - totalSpending.value, 0)
+);
 const formattedTotalSpending = computed(() => `$${totalSpending.value.toFixed(2)}`);
 const formattedLeftToSpend = computed(() => `$${leftToSpend.value.toFixed(2)}`);
 
@@ -66,12 +68,17 @@ const setChartData = () => {
   let cumulativeTotal = 0;
   const labels = [];
   const data = [];
+
   let currentDate = new Date(currentMonthStart);
   const endDate = new Date(nextMonthStart);
 
   while (currentDate < endDate) {
-    const dateLabel = currentDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    const dateLabel = currentDate.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
     labels.push(dateLabel);
+
     const dailyExpenses = filteredExpenses.filter(
       (expense) => new Date(expense.date).toDateString() === currentDate.toDateString()
     );
@@ -79,6 +86,7 @@ const setChartData = () => {
       cumulativeTotal += expense.amount;
     });
     data.push(cumulativeTotal);
+
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
@@ -92,6 +100,7 @@ const setChartData = () => {
         backgroundColor: "rgba(0, 183, 229, 0.2)",
         fill: true,
         pointRadius: 0,
+        tension: 0.05,
       },
     ],
   };
@@ -122,7 +131,9 @@ const setChartOptions = () => {
           },
           currentSpendingLabel: {
             type: 'label',
-            xValue: chartData.value ? chartData.value.labels[chartData.value.labels.length - 1] : '',
+            xValue: chartData.value
+              ? chartData.value.labels[chartData.value.labels.length - 1]
+              : '',
             yValue: totalSpending.value,
             content: [`Current: $${totalSpending.value.toFixed(2)}`],
             color: 'white',
@@ -153,6 +164,7 @@ const setChartOptions = () => {
         grid: {
           color: "#e0e0e0",
         },
+        suggestedMax: 1.5 * totalSpending.value,
       },
     },
   };
