@@ -43,7 +43,7 @@ jobs:
 
       # 6) Run Tests
       - name: Run Unit Tests
-        run: dotnet test .\BudgetApi.Tests\BudgetApi.Tests.csproj --configuration Release
+        run: dotnet test .\BudgetApi\BudgetApi.Tests\BudgetApi.Tests.csproj --configuration Release
         env:
           DOTNET_CLI_HOME: ${{ runner.temp }}
 
