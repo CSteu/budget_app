@@ -54,8 +54,37 @@ const router = createRouter({
       path: '/import',
       name: 'Import',
       component: () => import ('../views/ImportTransactionsView.vue'),
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import ('../views/LoginView.vue'),
     }
   ],
 })
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('authToken');
+  const requiresAuth = to.meta.requiresAuth;
+
+  if (requiresAuth) {
+    if (!token) {
+      return next('/login');
+    }
+    try {
+      const decoded = jwtDecode(token);
+      if (decoded.exp * 1000 < Date.now()) {
+        localStorage.removeItem('authToken');
+        return next('/login');
+      }
+    } catch (error) {
+      localStorage.removeItem('authToken');
+      return next('/login');
+    }
+  }
+
+  // Otherwise allow navigation
+  next();
+});
 
 export default router

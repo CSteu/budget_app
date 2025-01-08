@@ -100,7 +100,6 @@ const setChartData = () => {
         backgroundColor: "rgba(0, 183, 229, 0.2)",
         fill: true,
         pointRadius: 0,
-        tension: 0.05,
       },
     ],
   };

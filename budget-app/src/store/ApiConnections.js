@@ -7,7 +7,7 @@ export const savingsData = reactive({
 
 async function loadSavingsFromAPI() {
   try {
-    const response = await api.get("/accounts")
+    const response = await api.get("/api/accounts")
     return response.data.filter((account) => !account.isChecking)
   } catch (error) {
     console.error("Error loading savings:", error)
@@ -25,7 +25,7 @@ export const checkingData = reactive({
 
 async function loadCheckingFromAPI() {
   try {
-    const response = await api.get("/accounts")
+    const response = await api.get("/api/accounts")
     return response.data.filter((account) => account.isChecking)
   } catch (error) {
     console.error("Error loading checking:", error)
@@ -43,7 +43,7 @@ export const spendingData = reactive({
 
 async function loadSpendingFromAPI() {
   try {
-    const response = await api.get("/transactions")
+    const response = await api.get("/api/transactions")
     return response.data.filter((transaction) => !transaction.isIncome)
   } catch (error) {
     console.error("Error loading spending:", error)
@@ -53,7 +53,6 @@ async function loadSpendingFromAPI() {
 
 export async function loadSpendingData() {
   spendingData.expenses = await loadSpendingFromAPI()
-  console.log(spendingData.expenses);
 }
 
 export const incomeData = reactive({
@@ -62,7 +61,7 @@ export const incomeData = reactive({
 
 async function loadIncomeFromAPI() {
   try {
-    const response = await api.get("/transactions")
+    const response = await api.get("/api/transactions")
     return response.data.filter((transaction) => transaction.isIncome)
   } catch (error) {
     console.error("Error loading income:", error)
@@ -80,7 +79,7 @@ export const transferData = reactive({
 
 async function loadTransfersFromAPI() {
   try {
-    const response = await api.get("/transfers")
+    const response = await api.get("/api/transfers")
     return response.data
   } catch (error) {
     console.error("Error loading transfers:", error)
@@ -94,7 +93,7 @@ export async function loadTransferData() {
 
 export async function addSpending(newSpending) {
   try {
-    const response = await api.post("/transactions", {
+    const response = await api.post("/api/transactions", {
       description: newSpending.description,
       amount: newSpending.amount,
       date: newSpending.date,
@@ -109,7 +108,7 @@ export async function addSpending(newSpending) {
 
 export async function addIncome(newIncome) {
   try {
-    const response = await api.post("/transactions", {
+    const response = await api.post("/api/transactions", {
       description: newIncome.description,
       amount: newIncome.amount,
       date: newIncome.date,
@@ -124,7 +123,7 @@ export async function addIncome(newIncome) {
 
 export async function addSaving(newSaving) {
   try {
-    const response = await api.post("/accounts", {
+    const response = await api.post("/api/accounts", {
       amount: newSaving.amount,
       isChecking: false
     })
@@ -136,7 +135,7 @@ export async function addSaving(newSaving) {
 
 export async function addChecking(newChecking) {
   try {
-    const response = await api.post("/accounts", {
+    const response = await api.post("/api/accounts", {
       amount: newChecking.amount,
       isChecking: true
     })
@@ -148,7 +147,7 @@ export async function addChecking(newChecking) {
 
 export async function updateTransaction(updatedTransaction) {
   try {
-    const response = await api.put(`/transactions/${updatedTransaction.id}`, {
+    const response = await api.put(`/api/transactions/${updatedTransaction.id}`, {
       id: updatedTransaction.id,
       description: updatedTransaction.description,
       amount: updatedTransaction.amount,
@@ -174,7 +173,7 @@ export async function updateTransaction(updatedTransaction) {
 
 export async function deleteTransaction(transactionId) {
   try {
-    await api.delete(`/transactions/${transactionId}`)
+    await api.delete(`/api/transactions/${transactionId}`)
     spendingData.expenses = spendingData.expenses.filter(
       (t) => t.id !== transactionId
     )
@@ -188,7 +187,7 @@ export async function deleteTransaction(transactionId) {
 
 export async function importData(csvData) {
   try {
-    const response = await api.post("/import", csvData)
+    const response = await api.post("/api/import", csvData)
     if (!response.ok) {
       throw new Error(`Import failed: ${response.statusText}`)
     }
