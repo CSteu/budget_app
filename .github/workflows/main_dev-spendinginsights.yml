@@ -37,21 +37,25 @@ jobs:
         with:
           dotnet-version: '9.x'
 
-      # 5) Run Tests
+      # 5) Restore NuGet packages
+      - name: Restore .NET
+        run: dotnet restore .\BudgetApi\BudgetApi\BudgetApi.csproj
+
+      # 6) Run Tests
       - name: Run Unit Tests
         run: dotnet test .\BudgetApi\BudgetApi.Tests\BudgetApi.Tests.csproj --configuration Release
         env:
           DOTNET_CLI_HOME: ${{ runner.temp }}
 
-      # 6) Build .NET
+      # 7) Build .NET
       - name: Build .NET project
         run: dotnet build .\BudgetApi\BudgetApi\BudgetApi.csproj --configuration Release
 
-      # 7) Publish .NET
+      # 8) Publish .NET
       - name: Publish .NET project
         run: dotnet publish .\BudgetApi\BudgetApi\BudgetApi.csproj --configuration Release --output .\publish
 
-      # 8) Upload artifact
+      # 9) Upload artifact
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
