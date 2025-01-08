@@ -28,8 +28,6 @@ jobs:
       - name: Build Vue
         working-directory: budget-app
         run: npm run build
-        # If vue.config.js -> outputDir: ../BudgetApi/wwwroot
-        # then your compiled Vue files go into BudgetApi/wwwroot.
 
       # 4) Set up .NET
       - name: Set up .NET Core
@@ -41,21 +39,35 @@ jobs:
       - name: Restore .NET
         run: dotnet restore .\BudgetApi\BudgetApi\BudgetApi.csproj
 
-      # 6) Run Tests
+      # 6) Add EF Core Migrations
+      - name: Add EF Core Migrations
+        run: dotnet ef migrations add AutoMigration --project .\BudgetApi\BudgetApi\BudgetApi.csproj --startup-project .\BudgetApi\BudgetApi\BudgetApi.csproj
+        env:
+          DOTNET_CLI_HOME: ${{ runner.temp }}
+          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+      # 7) Apply EF Core Migrations
+      - name: Apply EF Core Migrations
+        run: dotnet ef database update --project .\BudgetApi\BudgetApi\BudgetApi.csproj --startup-project .\BudgetApi\BudgetApi\BudgetApi.csproj
+        env:
+          DOTNET_CLI_HOME: ${{ runner.temp }}
+          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+      # 8) Run Tests
       - name: Run Unit Tests
         run: dotnet test .\BudgetApi\BudgetApi.Tests\BudgetApi.Tests.csproj --configuration Release
         env:
           DOTNET_CLI_HOME: ${{ runner.temp }}
 
-      # 7) Build .NET
+      # 9) Build .NET
       - name: Build .NET project
         run: dotnet build .\BudgetApi\BudgetApi\BudgetApi.csproj --configuration Release
 
-      # 8) Publish .NET
+      # 10) Publish .NET
       - name: Publish .NET project
         run: dotnet publish .\BudgetApi\BudgetApi\BudgetApi.csproj --configuration Release --output .\publish
 
-      # 9) Upload artifact
+      # 11) Upload artifact
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -94,4 +106,4 @@ jobs:
         with:
           app-name: 'dev-spendinginsights'
           slot-name: 'Production'
-          package: ./publish  # <--- Points to the same "publish" folder
+          package: ./publish
