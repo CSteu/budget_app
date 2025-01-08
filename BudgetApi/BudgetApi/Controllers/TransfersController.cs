@@ -1,4 +1,5 @@
-﻿using BudgetApi.Models;
+﻿using BudgetApi.Data;
+using BudgetApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,9 +9,9 @@ namespace BudgetApi.Controllers
 	[ApiController]
 	public class TransfersController : ControllerBase
 	{
-		private readonly BudgetDbContext _context;
+		private readonly BudgetAuthDbContext _context;
 
-		public TransfersController(BudgetDbContext context)
+		public TransfersController(BudgetAuthDbContext context)
 		{
 			_context = context;
 		}

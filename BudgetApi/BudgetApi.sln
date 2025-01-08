@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetApi", "BudgetApi\Budg
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetApi.Tests", "BudgetApi.Tests\BudgetApi.Tests.csproj", "{1F4D42CF-66EF-407D-8FAA-F0991A399425}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "BudgetDb", "BudgetDb\BudgetDb.sqlproj", "{0135881C-B89E-4FC9-96B2-D961FBFDE079}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,12 +21,6 @@ Global
 		{1F4D42CF-66EF-407D-8FAA-F0991A399425}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F4D42CF-66EF-407D-8FAA-F0991A399425}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F4D42CF-66EF-407D-8FAA-F0991A399425}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0135881C-B89E-4FC9-96B2-D961FBFDE079}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0135881C-B89E-4FC9-96B2-D961FBFDE079}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0135881C-B89E-4FC9-96B2-D961FBFDE079}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{0135881C-B89E-4FC9-96B2-D961FBFDE079}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0135881C-B89E-4FC9-96B2-D961FBFDE079}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0135881C-B89E-4FC9-96B2-D961FBFDE079}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

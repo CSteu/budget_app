@@ -1,4 +1,6 @@
-﻿using BudgetApi.Models;
+﻿using BudgetApi.Data;
+using BudgetApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,15 +10,15 @@ namespace BudgetApi.Controllers
 	[ApiController]
 	public class AccountsController : ControllerBase
 	{
-		private readonly BudgetDbContext _context;
+		private readonly BudgetAuthDbContext _context;
 
-		public AccountsController(BudgetDbContext context)
+		public AccountsController(BudgetAuthDbContext context)
 		{
 			_context = context;
 		}
 
 		// GET: api/Accounts
-		[HttpGet]
+		[HttpGet, Authorize]
 		public async Task<ActionResult<IEnumerable<Account>>> GetAccounts()
 		{
 			var accounts = await _context.Accounts.ToListAsync();

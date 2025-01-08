@@ -1,14 +1,14 @@
-﻿using BudgetApi.Models;
+﻿using BudgetApi.Data;
 using Microsoft.EntityFrameworkCore;
 
 public static class DbContextFactory
 {
-	public static BudgetDbContext CreateInMemoryDbContext()
+	public static BudgetAuthDbContext CreateInMemoryDbContext()
 	{
-		var options = new DbContextOptionsBuilder<BudgetDbContext>()
+		var options = new DbContextOptionsBuilder<BudgetAuthDbContext>()
 			.UseInMemoryDatabase(databaseName: $"BudgetDb_{Guid.NewGuid()}")
 			.Options;
 
-		return new BudgetDbContext(options);
+		return new BudgetAuthDbContext(options);
 	}
 }
