@@ -55,11 +55,11 @@ jobs:
 
       # 9) Build SQL Database Project
       - name: Build SQL Database Project
-        run: dotnet build ./DatabaseProject/DatabaseProject.sqlproj --configuration Release
+        run: dotnet build .\BudgetApi\BudgetDb\BudgetDb.sqlproj --configuration Release
 
       # 10) Publish SQL Database Project to DACPAC
       - name: Publish SQL Database Project to DACPAC
-        run: dotnet publish ./DatabaseProject/DatabaseProject.sqlproj --configuration Release --output ./DatabaseProject/publish
+        run: dotnet publish .\BudgetApi\BudgetDb\BudgetDb.sqlproj --configuration Release --output .\BudgetDb\publish
 
       # 11) Upload artifacts
       - name: Upload .NET app artifact
@@ -72,7 +72,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sql-dacpac
-          path: ./DatabaseProject/publish/*.dacpac
+          path: .\BudgetDb\publish\*.dacpac
 
   deploy:
     runs-on: windows-latest
@@ -126,7 +126,7 @@ jobs:
       # 6) Deploy SQL Database
       - name: Deploy SQL Database
         run: |
-          sqlpackage /Action:Publish /SourceFile:"./sql/DatabaseProject.dacpac" /TargetServerName:"$env:AZURE_SQL_SERVER" /TargetDatabaseName:"$env:AZURE_SQL_DATABASE" /TargetUser:"$env:AZURE_SQL_USERNAME" /TargetPassword:"$env:AZURE_SQL_PASSWORD" /p:BlockOnPossibleDataLoss=false
+          sqlpackage /Action:Publish /SourceFile:"./sql/BudgetDb.dacpac" /TargetServerName:"$env:AZURE_SQL_SERVER" /TargetDatabaseName:"$env:AZURE_SQL_DATABASE" /TargetUser:"$env:AZURE_SQL_USERNAME" /TargetPassword:"$env:AZURE_SQL_PASSWORD" /p:BlockOnPossibleDataLoss=false
         env:
           AZURE_SQL_SERVER: ${{ secrets.AZURE_SQL_SERVER }}
           AZURE_SQL_DATABASE: ${{ secrets.AZURE_SQL_DATABASE }}
