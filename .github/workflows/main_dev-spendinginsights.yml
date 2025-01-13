@@ -1,4 +1,4 @@
-name: Build and deploy ASP.Net Core app and SQL Database to Azure
+name: Build and deploy ASP.Net Core app to Azure Web App - dev-spendinginsights
 
 on:
   push:
@@ -28,6 +28,8 @@ jobs:
       - name: Build Vue
         working-directory: budget-app
         run: npm run build
+        # If vue.config.js -> outputDir: ../BudgetApi/wwwroot
+        # then your compiled Vue files go into BudgetApi/wwwroot.
 
       # 4) Set up .NET
       - name: Set up .NET Core
@@ -53,36 +55,12 @@ jobs:
       - name: Publish .NET project
         run: dotnet publish .\BudgetApi\BudgetApi\BudgetApi.csproj --configuration Release --output .\publish
 
-      # 9) Install SSDT (SQL Server Data Tools)
-      - name: Install SSDT
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $vs_buildtools_path = "$env:USERPROFILE\Downloads\vs_buildtools.exe"
-          Invoke-WebRequest -Uri "https://aka.ms/vs/17/release/vs_buildtools.exe" -OutFile $vs_buildtools_path
-          Start-Process -FilePath $vs_buildtools_path -ArgumentList "--add Microsoft.VisualStudio.Workload.DataBuildTools --quiet --wait --norestart" -Wait -NoNewWindow
-          Remove-Item $vs_buildtools_path -Force
-
-      # 10) Build SQL Database Project
-      - name: Build SQL Database Project
-        run: dotnet build .\BudgetApi\BudgetDb\BudgetDb.sqlproj --configuration Release
-
-      # 11) Publish SQL Database Project to DACPAC
-      - name: Publish SQL Database Project to DACPAC
-        run: dotnet publish .\BudgetApi\BudgetDb\BudgetDb.sqlproj --configuration Release --output .\BudgetDb\publish
-
-      # 12) Upload artifacts
-      - name: Upload .NET app artifact
+      # 9) Upload artifact
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: dotnet-app
+          name: .net-app
           path: .\publish
-
-      - name: Upload SQL DACPAC artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: sql-dacpac
-          path: .\BudgetDb\publish\*.dacpac
 
   deploy:
     runs-on: windows-latest
@@ -94,51 +72,26 @@ jobs:
       id-token: write
 
     steps:
-      # 1) Download the published .NET artifact
-      - name: Download .NET artifact
+      # 1) Download the published artifact
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: dotnet-app
+          name: .net-app
           path: ./publish
 
-      # 2) Download the published SQL DACPAC artifact
-      - name: Download SQL DACPAC artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: sql-dacpac
-          path: ./sql
-
-      # 3) Login to Azure
+      # 2) Login to Azure
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_CA2262A82C1648A09DB89B4D0E819616 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_ECC96ED487F34812A7A516F6FD167E08 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_012C3F9BFF394490B3408C8958122D95 }}
 
-      # 4) Deploy to Azure Web App
+      # 3) Deploy to Azure Web App
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'dev-spendinginsights'
           slot-name: 'Production'
-          package: ./publish
-
-      # 5) Install sqlpackage
-      - name: Install sqlpackage
-        run: |
-          Invoke-WebRequest -Uri "https://aka.ms/sqlpackage-win" -OutFile "$env:USERPROFILE\Downloads\sqlpackage.zip"
-          Expand-Archive -Path "$env:USERPROFILE\Downloads\sqlpackage.zip" -DestinationPath "$env:USERPROFILE\Downloads\sqlpackage"
-          $env:PATH += ";$env:USERPROFILE\Downloads\sqlpackage"
-        shell: powershell
-
-      # 6) Deploy SQL Database
-      - name: Deploy SQL Database
-        run: |
-          sqlpackage /Action:Publish /SourceFile:"./sql/BudgetDb.dacpac" /TargetServerName:"$env:AZURE_SQL_SERVER" /TargetDatabaseName:"$env:AZURE_SQL_DATABASE" /TargetUser:"$env:AZURE_SQL_USERNAME" /TargetPassword:"$env:AZURE_SQL_PASSWORD" /p:BlockOnPossibleDataLoss=false
-        env:
-          AZURE_SQL_SERVER: ${{ secrets.AZURE_SQL_SERVER }}
-          AZURE_SQL_DATABASE: ${{ secrets.AZURE_SQL_DATABASE }}
-          AZURE_SQL_USERNAME: ${{ secrets.AZURE_SQL_USERNAME }}
-          AZURE_SQL_PASSWORD: ${{ secrets.AZURE_SQL_PASSWORD }}
+          package: ./publish  
