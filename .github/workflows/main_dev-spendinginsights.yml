@@ -56,13 +56,13 @@ jobs:
       # 9) Build SQL Database Project
       - name: Build SQL Database Project
         run: |
-          dotnet build .\DatabaseProject\DatabaseProject.sqlproj --configuration Release
+          dotnet build .\BudgetApi\DatabaseProject\DatabaseProject.sqlproj --configuration Release
         working-directory: ./DatabaseProject
 
       # 10) Publish SQL Database Project to DACPAC
       - name: Publish SQL Database Project to DACPAC
         run: |
-          dotnet publish .\DatabaseProject\DatabaseProject.sqlproj --configuration Release --output .\publish
+          dotnet publish .\BudgetApi\DatabaseProject\DatabaseProject.sqlproj --configuration Release --output .\publish
         working-directory: ./DatabaseProject
 
       # 11) Upload artifacts
