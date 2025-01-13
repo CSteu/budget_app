@@ -117,7 +117,7 @@
           password: this.credentials.password,
         });
         alert("Registration successful!");
-        this.toggleMode(); // Switch to login mode after successful registration
+        this.toggleMode();
       },
     },
   };

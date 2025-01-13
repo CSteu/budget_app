@@ -20,14 +20,17 @@ import { useRouter } from "vue-router";
 import Chart from "primevue/chart";
 
 const router = useRouter();
-const spendingData = inject("spendingData");
+const transactionData = inject("transactionData");
 
 const chartData = ref();
 const chartOptions = ref();
 const currentMonth = ref("");
 const targetSpending = ref(parseFloat(localStorage.getItem("targetSpending")) || 1000);
+
 const expenses = computed(() =>
-  Array.isArray(spendingData?.expenses) ? spendingData.expenses : []
+  Array.isArray(transactionData?.transactions)
+    ? transactionData.transactions.filter((transaction) => !transaction.isIncome)
+    : []
 );
 
 const totalSpending = computed(() => {
@@ -174,7 +177,7 @@ const goToEditBudget = () => {
 };
 
 watch(
-  () => spendingData?.expenses,
+  () => transactionData?.transactions,
   () => {
     setChartData();
   },

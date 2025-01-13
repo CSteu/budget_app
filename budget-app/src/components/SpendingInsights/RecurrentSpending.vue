@@ -28,8 +28,8 @@
 <script setup>
 import { inject, reactive, onMounted, watch } from "vue";
 
-const spendingData = inject('spendingData');
-const incomeData = inject('incomeData');
+// Inject unified transaction data
+const transactionData = inject('transactionData');
 
 const state = reactive({
   recurringItems: [],
@@ -44,17 +44,16 @@ const predefinedBlueShades = [
 ];
 
 const calculateRecurringTransactions = () => {
-  const expenses = Array.isArray(spendingData?.expenses) ? spendingData.expenses : [];
-  const incomes = Array.isArray(incomeData?.incomes) ? incomeData.incomes : [];
+  const transactions = Array.isArray(transactionData?.transactions)
+    ? transactionData.transactions
+    : [];
 
-  const allTransactions = [...expenses, ...incomes];
-  
-  if (allTransactions.length === 0) {
+  if (transactions.length === 0) {
     state.recurringItems = [];
     return;
   }
 
-  const grouped = allTransactions.reduce((acc, transaction) => {
+  const grouped = transactions.reduce((acc, transaction) => {
     const name = transaction.name || transaction.description || 'Unknown';
     const key = `${name}-${transaction.amount}`;
     if (!acc[key]) acc[key] = [];
@@ -86,7 +85,7 @@ const calculateRecurringTransactions = () => {
 };
 
 watch(
-  [() => spendingData?.expenses, () => incomeData?.incomes],
+  () => transactionData?.transactions,
   () => {
     calculateRecurringTransactions();
   },

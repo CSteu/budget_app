@@ -127,14 +127,14 @@
 </template>
 
 <script>
-import DataTable from "primevue/datatable"
-import Column from "primevue/column"
-import Dialog from "primevue/dialog"
-import InputText from "primevue/inputtext"
-import Dropdown from "primevue/dropdown"
-import InputNumber from "primevue/inputnumber"
-import { updateTransaction, deleteTransaction, loadSavingsData, loadSpendingData } from "@/store/ApiConnections"
-import { refreshData } from "@/store/ApiConnections"
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import Dialog from "primevue/dialog";
+import InputText from "primevue/inputtext";
+import Dropdown from "primevue/dropdown";
+import InputNumber from "primevue/inputnumber";
+import { updateTransaction, deleteTransaction } from "@/store/ApiConnections";
+import { refreshData } from "@/store/ApiConnections";
 
 export default {
   components: {
@@ -143,9 +143,9 @@ export default {
     Dialog,
     InputText,
     Dropdown,
-    InputNumber
+    InputNumber,
   },
-  inject: ["spendingData", "incomeData"],
+  inject: ["transactionData"],
   data() {
     return {
       filteredTransactions: [],
@@ -162,153 +162,111 @@ export default {
         { name: "Subscriptions", value: "Subscriptions" },
         { name: "Dining", value: "Dining" },
         { name: "Education", value: "Education" },
-        { name: "Other", value: "Other" }
-      ]
-    }
+        { name: "Other", value: "Other" },
+      ],
+    };
   },
   computed: {
-    expenses() {
-      return Array.isArray(this.spendingData?.expenses)
-        ? this.spendingData.expenses
-        : []
-    },
-    incomes() {
-      return Array.isArray(this.incomeData?.incomes)
-        ? this.incomeData.incomes
-        : []
-    },
     transactions() {
-      const negativeExpenses = this.expenses.map((expense) => ({
-        ...expense,
-        amount: -Math.abs(expense.amount)
-      }))
-      return [...negativeExpenses, ...this.incomes]
-    }
+      return Array.isArray(this.transactionData?.transactions)
+        ? this.transactionData.transactions
+        : [];
+    },
   },
   methods: {
     async refreshDataFromApi() {
       try {
-        refreshData()
+        await refreshData();
       } catch (e) {
-        console.error(e)
+        console.error(e);
       }
     },
     updateFilteredTransactions() {
-      const now = new Date()
-      const thirtyDaysAgo = new Date()
-      thirtyDaysAgo.setDate(now.getDate() - 30)
+      const now = new Date();
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(now.getDate() - 30);
       this.filteredTransactions = this.transactions.filter((transaction) => {
-        const transactionDate = new Date(transaction.date)
-        return transactionDate >= thirtyDaysAgo && transactionDate <= now
-      })
-      this.filteredTransactions.sort((a, b) => new Date(b.date) - new Date(a.date))
-      this.groupAndFormatDates()
+        const transactionDate = new Date(transaction.date);
+        return transactionDate >= thirtyDaysAgo && transactionDate <= now;
+      });
+      this.filteredTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+      this.groupAndFormatDates();
     },
     groupAndFormatDates() {
-      let lastFormattedDate = null
+      let lastFormattedDate = null;
       this.filteredTransactions.forEach((transaction) => {
         const currentDate = new Date(transaction.date).toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
-          year: "numeric"
-        })
+          year: "numeric",
+        });
         if (currentDate !== lastFormattedDate) {
-          transaction.formattedDate = currentDate
-          lastFormattedDate = currentDate
+          transaction.formattedDate = currentDate;
+          lastFormattedDate = currentDate;
         } else {
-          transaction.formattedDate = ""
+          transaction.formattedDate = "";
         }
-      })
+      });
     },
     openEditDialog(transaction) {
-      const today = new Date().toISOString().split("T")[0]
-      let formattedDate = today
+      const today = new Date().toISOString().split("T")[0];
+      let formattedDate = today;
       if (transaction.date) {
-        const dateObj = new Date(transaction.date)
+        const dateObj = new Date(transaction.date);
         if (!isNaN(dateObj.getTime())) {
-          formattedDate = dateObj.toISOString().split("T")[0]
+          formattedDate = dateObj.toISOString().split("T")[0];
         }
       }
       this.editTransaction = {
         ...transaction,
         date: formattedDate,
-        amount: Math.abs(transaction.amount)
-      }
-      this.isEditModalOpen = true
+      };
+      this.isEditModalOpen = true;
     },
     closeEditDialog() {
-      this.isEditModalOpen = false
-      this.editTransaction = {}
+      this.isEditModalOpen = false;
+      this.editTransaction = {};
     },
     async saveTransaction() {
       try {
-        const updated = await updateTransaction(this.editTransaction)
-        this.mergeUpdatedTransaction(updated)
-        this.closeEditDialog()
-        await this.refreshDataFromApi()
+        const updated = await updateTransaction(this.editTransaction);
+        this.mergeUpdatedTransaction(updated);
+        this.closeEditDialog();
+        await this.refreshDataFromApi();
       } catch (error) {
-        console.error("Error saving transaction:", error)
+        console.error("Error saving transaction:", error);
       }
     },
     mergeUpdatedTransaction(updated) {
-      if (!updated) return
-      if (updated.isIncome) {
-        const index = this.incomes.findIndex((t) => t.id === updated.id)
-        if (index !== -1) {
-          this.incomes.splice(index, 1, updated)
-        } else {
-          const expIndex = this.expenses.findIndex((t) => t.id === updated.id)
-          if (expIndex !== -1) {
-            this.expenses.splice(expIndex, 1)
-          }
-          this.incomes.push(updated)
-        }
-      } else {
-        const index = this.expenses.findIndex((t) => t.id === updated.id)
-        if (index !== -1) {
-          this.expenses.splice(index, 1, updated)
-        } else {
-          const incIndex = this.incomes.findIndex((t) => t.id === updated.id)
-          if (incIndex !== -1) {
-            this.incomes.splice(incIndex, 1)
-          }
-          this.expenses.push(updated)
-        }
+      const index = this.transactions.findIndex((t) => t.id === updated.id);
+      if (index !== -1) {
+        this.transactions.splice(index, 1, updated);
       }
     },
     async deleteTransactionHandler(transactionId) {
       try {
-        await deleteTransaction(transactionId)
-        this.spendingData.expenses = this.spendingData.expenses.filter(
+        await deleteTransaction(transactionId);
+        this.transactionData.transactions = this.transactionData.transactions.filter(
           (t) => t.id !== transactionId
-        )
-        this.incomeData.incomes = this.incomeData.incomes.filter(
-          (t) => t.id !== transactionId
-        )
-        this.updateFilteredTransactions()
+        );
+        this.updateFilteredTransactions();
       } catch (error) {
-        console.error("Error deleting transaction:", error)
+        console.error("Error deleting transaction:", error);
       }
-    }
+    },
   },
   watch: {
-    "spendingData.expenses": {
+    "transactionData.transactions": {
       handler() {
-        this.updateFilteredTransactions()
+        this.updateFilteredTransactions();
       },
-      deep: true
+      deep: true,
     },
-    "incomeData.incomes": {
-      handler() {
-        this.updateFilteredTransactions()
-      },
-      deep: true
-    }
   },
   mounted() {
-    this.updateFilteredTransactions()
-  }
-}
+    this.updateFilteredTransactions();
+  },
+};
 </script>
 
 <style>

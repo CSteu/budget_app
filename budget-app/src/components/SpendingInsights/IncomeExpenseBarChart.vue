@@ -18,7 +18,7 @@ export default {
   components: {
     Chart,
   },
-  inject: ["spendingData", "incomeData"],
+  inject: ["transactionData"],
   data() {
     return {
       chartData: null,
@@ -27,18 +27,16 @@ export default {
     };
   },
   computed: {
-    expenses() {
-      return Array.isArray(this.spendingData?.expenses)
-        ? this.spendingData.expenses
+    transactions() {
+      return Array.isArray(this.transactionData?.transactions)
+        ? this.transactionData.transactions
         : [];
     },
     incomes() {
-      return Array.isArray(this.incomeData?.incomes)
-        ? this.incomeData.incomes
-        : [];
+      return this.transactions.filter((transaction) => transaction.isIncome);
     },
-    transactions() {
-      return [...this.expenses, ...this.incomes];
+    expenses() {
+      return this.transactions.filter((transaction) => !transaction.isIncome);
     },
     moneyEarned() {
       const currentMonthData = this.groupDataByMonth()[this.currentMonthKey] || { income: 0 };
@@ -83,7 +81,7 @@ export default {
           const key = this.formatDateToMonth(entry.date);
           if (!groupedData[key]) groupedData[key] = { income: 0, expense: 0 };
 
-          if (this.incomes.some((income) => income === entry)) {
+          if (entry.isIncome) {
             groupedData[key].income += entry.amount;
           } else {
             groupedData[key].expense += entry.amount;
@@ -102,7 +100,6 @@ export default {
       const groupedData = this.groupDataByMonth();
       const labels = Object.keys(groupedData).map(date => this.getMonthAbbreviation(date));
 
-      // Round each income and expense to two decimals
       const incomeData = Object.keys(groupedData).map(label => this.roundToTwoDecimals(groupedData[label].income));
       const expenseData = Object.keys(groupedData).map(label => this.roundToTwoDecimals(groupedData[label].expense));
 
@@ -194,13 +191,7 @@ export default {
     },
   },
   watch: {
-    "spendingData.expenses": {
-      handler() {
-        this.updateChart();
-      },
-      deep: true,
-    },
-    "incomeData.incomes": {
+    "transactionData.transactions": {
       handler() {
         this.updateChart();
       },

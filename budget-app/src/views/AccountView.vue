@@ -1,46 +1,43 @@
 <script setup>
-import { provide, onMounted, ref } from 'vue'
+import { provide, onMounted, ref } from 'vue';
 import {
-  spendingData,
-  incomeData,
+  transactionData,
   savingsData,
   checkingData,
   transferData,
-  loadIncomeData,
-  loadSpendingData,
   loadCheckingData,
   loadSavingsData,
   loadTransferData,
-} from '../store/ApiConnections'
-import Checking from '@/components/AccountPage/Checking.vue'
-import Savings from '@/components/AccountPage/Savings.vue'
-import TransferTable from '@/components/AccountPage/TransferTable.vue'
+  loadTransactionData,
+} from '../store/ApiConnections';
+import Checking from '@/components/AccountPage/Checking.vue';
+import Savings from '@/components/AccountPage/Savings.vue';
+import TransferTable from '@/components/AccountPage/TransferTable.vue';
 
-const isLoading = ref(true)
+const isLoading = ref(true);
 
-provide('spendingData', spendingData)
-provide('incomeData', incomeData)
-provide('savingsData', savingsData)
-provide('checkingData', checkingData)
-provide('transferData', transferData)
+// Provide unified data to child components
+provide('transactionData', transactionData);
+provide('savingsData', savingsData);
+provide('checkingData', checkingData);
+provide('transferData', transferData);
 
 const refreshData = async () => {
   try {
-    await loadSpendingData()
-    await loadIncomeData()
-    await loadCheckingData()
-    await loadSavingsData()
-    await loadTransferData()
+    await loadTransactionData(); // Load both income and expenses
+    await loadCheckingData();
+    await loadSavingsData();
+    await loadTransferData();
   } catch (error) {
-    console.error('Error loading data', error)
+    console.error('Error loading data', error);
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 onMounted(() => {
-  refreshData()
-})
+  refreshData();
+});
 </script>
 
 <template>
@@ -108,7 +105,7 @@ onMounted(() => {
 }
 
 .header-buttons {
-  display:flex;
+  display: flex;
 }
 
 .add-transaction {
@@ -144,5 +141,4 @@ onMounted(() => {
   display: flex;
   gap: 1rem;
 }
-
 </style>

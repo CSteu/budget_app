@@ -1,9 +1,6 @@
 <script setup>
 import { provide, onMounted } from 'vue'
-import {
-  spendingData,
-  incomeData,
-} from '../store/ApiConnections'
+import { transactionData } from '../store/ApiConnections'
 import { refreshData } from '../store/ApiConnections'
 
 import ExpenseTracker from '../components/SpendingInsights/TransactionTable.vue'
@@ -13,8 +10,7 @@ import SpendingCategories from '@/components/SpendingInsights/SpendingCategories
 import RecurrentSpending from '@/components/SpendingInsights/RecurrentSpending.vue'
 import KanyeRest from '@/components/SpendingInsights/KanyeRest.vue'
 
-provide('spendingData', spendingData)
-provide('incomeData', incomeData)
+provide('transactionData', transactionData)
 
 onMounted(() => {
   refreshData()

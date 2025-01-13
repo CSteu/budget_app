@@ -35,7 +35,8 @@ const predefinedBlueShades = [
   '#00b4d8',
 ];
 
-const spendingData = inject('spendingData');
+// Inject unified transaction data
+const transactionData = inject('transactionData');
 
 const state = reactive({
   topCategories: [],
@@ -61,10 +62,10 @@ const chartOptions = reactive({
         label: (tooltipItem) => {
           const value = tooltipItem.raw;
           return `$${parseFloat(value).toFixed(2)}`;
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  },
 });
 
 const formatCurrency = (value) => {
@@ -72,9 +73,13 @@ const formatCurrency = (value) => {
 };
 
 const calculateTopCategories = () => {
-  const expenses = Array.isArray(spendingData?.expenses) ? spendingData.expenses : [];
+  const transactions = Array.isArray(transactionData?.transactions)
+    ? transactionData.transactions
+    : [];
+  const expenses = transactions.filter((transaction) => !transaction.isIncome);
+
   const today = new Date();
-  const currentMonthStart = new Date(today.getFullYear(), today.getMonth()-1, 1);
+  const currentMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
   const nextMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
   const currentMonthExpenses = expenses.filter((expense) => {
@@ -115,7 +120,7 @@ const updateChart = () => {
 };
 
 watch(
-  () => spendingData?.expenses,
+  () => transactionData?.transactions,
   () => {
     calculateTopCategories();
   },

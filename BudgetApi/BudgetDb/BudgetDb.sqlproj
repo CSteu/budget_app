@@ -6,14 +6,14 @@
     <Name>BudgetDb</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
-    <ProjectGuid>{0135881c-b89e-4fc9-96b2-d961fbfde079}</ProjectGuid>
+    <ProjectGuid>{2d27cd38-bcc8-44d4-a01d-cb02925d747e}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
     <RootNamespace>BudgetDb</RootNamespace>
     <AssemblyName>BudgetDb</AssemblyName>
-    <ModelCollation>1033, CI</ModelCollation>
+    <ModelCollation>1033,CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -22,6 +22,8 @@
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -56,5 +58,20 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\__EFMigrationsHistory.sql" />
+    <Build Include="dbo\Tables\Accounts.sql" />
+    <Build Include="dbo\Tables\Transactions.sql" />
+    <Build Include="dbo\Tables\Transfers.sql" />
+    <Build Include="dbo\Tables\AspNetRoles.sql" />
+    <Build Include="dbo\Tables\AspNetUsers.sql" />
+    <Build Include="dbo\Tables\AspNetRoleClaims.sql" />
+    <Build Include="dbo\Tables\AspNetUserClaims.sql" />
+    <Build Include="dbo\Tables\AspNetUserLogins.sql" />
+    <Build Include="dbo\Tables\AspNetUserRoles.sql" />
+    <Build Include="dbo\Tables\AspNetUserTokens.sql" />
   </ItemGroup>
 </Project>

@@ -1,31 +1,7 @@
 <script setup>
-import { provide, onMounted } from 'vue'
-import {
-  spendingData,
-  incomeData,
-  loadIncomeData,
-  loadSpendingData,
-} from '../store/ApiConnections'
 
-import ExpenseTracker from '../components/SpendingInsights/TransactionTable.vue'
-import IncomeExpenseBarChart from '@/components/SpendingInsights/IncomeExpenseBarChart.vue'
-import SpendingLineChart from '@/components/SpendingInsights/SpendingLineChart.vue'
-import SpendingCategories from '@/components/SpendingInsights/SpendingCategories.vue'
-import RecurrentSpending from '@/components/SpendingInsights/RecurrentSpending.vue'
-import KanyeRest from '@/components/SpendingInsights/KanyeRest.vue'
 import CSVUploadAndPreview from '@/components/ImportTransactions/CSVUploadAndPreview.vue'
 
-provide('spendingData', spendingData)
-provide('incomeData', incomeData)
-
-const refreshData = async () => {
-  await loadSpendingData()
-  await loadIncomeData()
-}
-
-onMounted(() => {
-  refreshData()
-})
 </script>
 
 <template>
