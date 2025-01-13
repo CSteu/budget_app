@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="addNewIncome" class="form">
+  <form @submit.prevent="addNewTransaction" class="form">
     <div class="form-field">
       <label for="date">Date</label>
       <input
@@ -59,7 +59,7 @@
 import { ref, defineEmits, onMounted } from "vue";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
-import { addIncome } from "@/store/ApiConnections";
+import { addTransaction } from "@/store/ApiConnections";
 
 const emits = defineEmits(["submitted"]);
 
@@ -78,18 +78,13 @@ const transaction = ref({
   category: "Income",
 });
 
-const addNewIncome = async () => {
+const addNewTransaction = async () => {
   try {
-    await addIncome({
-      description: transaction.value.description,
-      amount: transaction.value.amount,
-      date: transaction.value.date,
-      category: transaction.value.category,
-    });
+    await addTransaction({ ...transaction.value });
     resetForm();
     emits("submitted");
   } catch (error) {
-    console.error("Error adding income transaction:", error);
+    console.error("Error adding transaction:", error);
   }
 };
 

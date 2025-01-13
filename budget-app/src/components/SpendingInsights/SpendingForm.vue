@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="addNewSpending" class="form">
+  <form @submit.prevent="addNewTransaction" class="form">
     <div class="form-field">
       <label for="date">Date</label>
       <input
@@ -52,7 +52,7 @@
         required
         class="input-field"
       />
-      <small class="field-info">Enter the amount of the spending transaction.</small>
+      <small class="field-info">Enter the amount of the transaction.</small>
     </div>
 
     <div class="form-actions">
@@ -66,7 +66,7 @@ import { ref, defineEmits, onMounted } from "vue";
 import InputText from "primevue/inputtext";
 import Dropdown from "primevue/dropdown";
 import InputNumber from "primevue/inputnumber";
-import { addSpending } from "@/store/ApiConnections"; 
+import { addTransaction } from "@/store/ApiConnections"; 
 const emits = defineEmits(["submitted"]);
 
 const getTodayDate = () => {
@@ -98,13 +98,13 @@ const categories = [
   { name: "Other", value: "Other" },
 ];
 
-const addNewSpending = async () => {
+const addNewTransaction = async () => {
   try {
-    await addSpending({ ...transaction.value });
+    await addTransaction({ ...transaction.value });
     resetForm();
     emits("submitted");
   } catch (error) {
-    console.error("Error adding spending transaction:", error);
+    console.error("Error adding transaction:", error);
   }
 };
 
@@ -182,3 +182,4 @@ onMounted(() => {
   color: black;
 }
 </style>
+

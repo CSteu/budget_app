@@ -1,97 +1,74 @@
 <template>
-    <div class="expense-tracker">
-      <h1>SoFi CSV Upload</h1>
-      <div class="content">
-        <div class="expense-table-container">
-          <div class="file-upload-wrapper">
-            <label for="file-upload" class="file-upload-label">
-              Choose CSV File
-            </label>
-            <input
-              id="file-upload"
-              type="file"
-              accept=".csv"
-              @change="onFileSelect"
-            />
-            <Button
-              label="Import to Database"
-              id="upload-import-button"
-              style="margin-top: 1rem;"
-              :disabled="!canImport"
-              @click="callImportData"
-            />
-          </div>
-          <DataTable
-            :value="csvData"
-            :paginator="true"
-            :rows="8"
-            responsiveLayout="scroll"
-            class="expense-table"
-            style="margin-top: 1rem;"
-          >
-            <Column field="Date" header="Date" />
-            <Column field="Description" header="Description" />
-            <Column field="Type" header="Type" />
-            <Column field="Amount" header="Amount" />
-            <Column field="Current balance" header="Current balance" />
-          </DataTable>
+  <div class="expense-tracker">
+    <h1>SoFi CSV Upload</h1>
+    <div class="content">
+      <div class="expense-table-container">
+        <div class="file-upload-wrapper">
+          <label for="file-upload" class="file-upload-label">
+            Choose CSV File
+          </label>
+          <input
+            id="file-upload"
+            type="file"
+            accept=".csv"
+            @change="onFileSelect"
+          />
         </div>
+        <DataTable
+          :value="csvData"
+          :paginator="true"
+          :rows="8"
+          responsiveLayout="scroll"
+          class="expense-table"
+          style="margin-top: 1rem;"
+        >
+          <Column field="Date" header="Date" />
+          <Column field="Description" header="Description" />
+          <Column field="Type" header="Type" />
+          <Column field="Amount" header="Amount" />
+          <Column field="Current balance" header="Current balance" />
+        </DataTable>
       </div>
     </div>
-  </template>
-  
-  <script>
-  import Papa from "papaparse"
-  import DataTable from "primevue/datatable"
-  import Column from "primevue/column"
-  import Button from "primevue/button"
-  import { importData } from "@/store/ApiConnections"
-  
-  export default {
-    name: "CsvUploadAndPreview",
-    components: {
-      DataTable,
-      Column,
-      Button
+  </div>
+</template>
+
+<script>
+import Papa from "papaparse";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+
+export default {
+  name: "CsvUploadAndPreview",
+  components: {
+    DataTable,
+    Column,
+  },
+  data() {
+    return {
+      csvData: [],
+    };
+  },
+  methods: {
+    onFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results) => {
+          this.csvData = results.data.filter((row) =>
+            ["Debit Card", "Direct Payment", "Deposit", "Direct Deposit"].includes(row.Type)
+          );
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      });
     },
-    data() {
-      return {
-        csvData: []
-      }
-    },
-    computed: {
-      canImport() {
-        return this.csvData && this.csvData.length > 0
-      }
-    },
-    methods: {
-      onFileSelect(event) {
-        const file = event.target.files[0]
-        if (!file) return
-        Papa.parse(file, {
-          header: true,
-          skipEmptyLines: true,
-          complete: (results) => {
-            this.csvData = results.data.filter((row) =>
-              ["Debit Card", "Direct Payment", "Deposit", "Direct Deposit"].includes(row.Type)
-            )
-          },
-          error: (err) => {
-            console.error(err)
-          }
-        })
-      },
-      async callImportData() {
-        try {
-          await importData(this.csvData)
-          this.$router.push("/")
-        } catch (error) {
-          console.error(error)
-        }
-      }
-    }
-  }
-  </script>
+  },
+};
+</script>
   
   <style scoped>
   .content {
