@@ -53,15 +53,25 @@ jobs:
       - name: Publish .NET project
         run: dotnet publish .\BudgetApi\BudgetApi\BudgetApi.csproj --configuration Release --output .\publish
 
-      # 9) Build SQL Database Project
+      # 9) Install SSDT (SQL Server Data Tools)
+      - name: Install SSDT
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vs_buildtools_path = "$env:USERPROFILE\Downloads\vs_buildtools.exe"
+          Invoke-WebRequest -Uri "https://aka.ms/vs/17/release/vs_buildtools.exe" -OutFile $vs_buildtools_path
+          Start-Process -FilePath $vs_buildtools_path -ArgumentList "--add Microsoft.VisualStudio.Workload.DataBuildTools --quiet --wait --norestart" -Wait -NoNewWindow
+          Remove-Item $vs_buildtools_path -Force
+
+      # 10) Build SQL Database Project
       - name: Build SQL Database Project
         run: dotnet build .\BudgetApi\BudgetDb\BudgetDb.sqlproj --configuration Release
 
-      # 10) Publish SQL Database Project to DACPAC
+      # 11) Publish SQL Database Project to DACPAC
       - name: Publish SQL Database Project to DACPAC
         run: dotnet publish .\BudgetApi\BudgetDb\BudgetDb.sqlproj --configuration Release --output .\BudgetDb\publish
 
-      # 11) Upload artifacts
+      # 12) Upload artifacts
       - name: Upload .NET app artifact
         uses: actions/upload-artifact@v4
         with:
