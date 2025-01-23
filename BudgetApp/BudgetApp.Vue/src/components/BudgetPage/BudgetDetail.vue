@@ -14,7 +14,7 @@
           icon="pi pi-angle-right"
           class="p-button-secondary"
           @click="goToNextMonth"
-          :disabled="isFutureMonth"
+          :disabled="isCurrentMonth"
           v-tooltip.top="'Next Month'"
         />
         <Button
@@ -56,11 +56,11 @@
 
       <Card class="budget-page__summary-panel">
         <template #title>
-          <div class="budget-page__summary-title">Total Savings</div>
+          <div class="budget-page__summary-title">Total Earnings</div>
         </template>
         <template #content>
           <div class="budget-page__summary-value budget-page__summary-value--savings">
-            ${{ formatNumber(totalSavings) }}
+            ${{ formatNumber(totalEarnings) }}
           </div>
         </template>
       </Card>
@@ -162,7 +162,7 @@ const predefinedCategories = [
 const budgetCategories = ref([]);
 const budgets = ref({});
 const totalSpending = ref(0);
-const totalSavings = ref(0);
+const totalEarnings = ref(0);
 const totalBudgeted = ref(0);
 const isEditing = ref(false);
 
@@ -180,12 +180,6 @@ const currentMonthYear = computed(() => {
 const isCurrentMonth = computed(() => {
   const today = new Date();
   return currentMonth.value === today.getMonth() && currentYear.value === today.getFullYear();
-});
-
-const isFutureMonth = computed(() => {
-  const today = new Date();
-  return currentYear.value > today.getFullYear() || 
-         (currentYear.value === today.getFullYear() && currentMonth.value > today.getMonth());
 });
 
 const minYear = 2000;
@@ -228,7 +222,7 @@ const calculateTotals = () => {
   const incomes = transactions.filter((transaction) => transaction.isIncome);
 
   totalSpending.value = expenses.reduce((acc, expense) => acc + expense.amount, 0);
-  totalSavings.value = incomes.reduce((acc, income) => acc + income.amount, 0) - totalSpending.value;
+  totalEarnings.value = incomes.reduce((acc, income) => acc + income.amount, 0);
   totalBudgeted.value = Object.values(budgets.value).reduce((acc, budget) => acc + budget, 0);
 };
 
@@ -297,12 +291,15 @@ const goToPreviousMonth = () => {
 };
 
 const goToNextMonth = () => {
-  if (currentMonth.value < 11) {
-    currentMonth.value++;
-  } else {
-    currentMonth.value = 0;
-    currentYear.value++;
-  }
+  const today = new Date();
+    if (currentMonth.value < today.getMonth() || currentYear.value < today.getFullYear()) {
+      if (currentMonth.value < 11) {
+        currentMonth.value++;
+      } else {
+        currentMonth.value = 0;
+        currentYear.value++;
+      }
+    }
 };
 
 const goToCurrentMonth = () => {
