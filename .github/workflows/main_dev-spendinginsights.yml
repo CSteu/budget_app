@@ -57,7 +57,7 @@ jobs:
       # 8) Build Database Project
       - name: Build Database Project
         run: |
-          msbuild .\BudgetApp\BudgetApi.Database\BudgetApi.Database.sqlproj /p:Configuration=Debug /p:OutputPath=..\BudgetApi\bin\Debug\ /p:OutDir=..\BudgetApi\bin\Debug\
+          msbuild .\BudgetApp\BudgetApi.Database\BudgetAppDb.sqlproj /p:Configuration=Debug /p:OutputPath=..\BudgetApi\bin\Debug\ /p:OutDir=..\BudgetApi\bin\Debug\
           
       # 9) Publish .NET
       - name: Publish .NET project
