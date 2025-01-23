@@ -1,5 +1,47 @@
 <template>
   <div class="budget-page">
+    <div class="budget-page__header">
+      <div class="budget-page__month-selector">
+        <Button
+          icon="pi pi-angle-left"
+          class="p-button-secondary"
+          @click="goToPreviousMonth"
+          :disabled="isPastMonth"
+          v-tooltip.top="'Previous Month'"
+        />
+        <span class="budget-page__current-month">{{ currentMonthYear }}</span>
+        <Button
+          icon="pi pi-angle-right"
+          class="p-button-secondary"
+          @click="goToNextMonth"
+          :disabled="isFutureMonth"
+          v-tooltip.top="'Next Month'"
+        />
+        <Button
+          icon="pi pi-calendar"
+          class="p-button-success"
+          @click="goToCurrentMonth"
+          v-tooltip.top="'Jump to Current Month'"
+          :disabled="isCurrentMonth"
+        />
+      </div>
+      <div class="budget-page__edit-button">
+        <Button
+          v-if="!isEditing"
+          icon="pi pi-pencil"
+          class="p-button-info"
+          @click="isEditing = true"
+          v-tooltip.top="'Edit Targets'"
+        />
+        <Button
+          v-else
+          icon="pi pi-times"
+          class="p-button-danger"
+          @click="handleCancelEdit"
+          v-tooltip.top="'Cancel Edit'"
+        />
+      </div>
+    </div>
     <div class="budget-page__summary-panels">
       <Card class="budget-page__summary-panel">
         <template #title>
@@ -40,11 +82,15 @@
         <template #header>
           <div class="budget-page__category-header">
             <h3 class="budget-page__category-title">{{ category.name }}</h3>
-            <Button
-              icon="pi pi-pencil"
-              class="p-button-text"
-              @click="openEditDialog(category.name)"
-              v-tooltip.top="'Edit Target'"
+            <InputNumber
+              v-if="isEditing"
+              v-model="budgets[category.name]"
+              mode="currency"
+              currency="USD"
+              locale="en-US"
+              :min="0"
+              :max="1000000"
+              class="budget-page__category-input"
             />
           </div>
         </template>
@@ -80,39 +126,12 @@
           </div>
         </template>
       </Card>
-
-      <Dialog
-        v-model:visible="displayEditDialog"
-        modal
-        header="Edit Budget"
-        :style="{ width: '400px' }"
-        :closable="false"
-      >
-        <div class="budget-page__dialog-form">
-          <label :for="'budget-' + currentEditCategory" class="budget-page__dialog-label">
-            Set budget for <strong>{{ currentEditCategory }}</strong>:
-          </label>
-          <InputNumber
-            :id="'budget-' + currentEditCategory"
-            v-model="tempBudget"
-            mode="currency"
-            currency="USD"
-            locale="en-US"
-            :min="0"
-            :max="1000000"
-          />
-        </div>
-        <template #footer>
-          <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="cancelEdit" />
-          <Button label="Save" icon="pi pi-check" @click="saveBudget" autofocus />
-        </template>
-      </Dialog>
     </div>
   </div>
 </template>
 
 <script setup>
-import { inject, ref, reactive, watch, onMounted } from 'vue';
+import { inject, ref, reactive, watch, onMounted, computed } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
@@ -145,9 +164,35 @@ const budgets = ref({});
 const totalSpending = ref(0);
 const totalSavings = ref(0);
 const totalBudgeted = ref(0);
-const displayEditDialog = ref(false);
-const currentEditCategory = ref('');
-const tempBudget = ref(0);
+const isEditing = ref(false);
+
+const currentDate = new Date();
+const currentMonth = ref(currentDate.getMonth());
+const currentYear = ref(currentDate.getFullYear());
+
+const currentMonthYear = computed(() => {
+  const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  return `${monthNames[currentMonth.value]} ${currentYear.value}`;
+});
+
+const isCurrentMonth = computed(() => {
+  const today = new Date();
+  return currentMonth.value === today.getMonth() && currentYear.value === today.getFullYear();
+});
+
+const isFutureMonth = computed(() => {
+  const today = new Date();
+  return currentYear.value > today.getFullYear() || 
+         (currentYear.value === today.getFullYear() && currentMonth.value > today.getMonth());
+});
+
+const minYear = 2000;
+
+const isPastMonth = computed(() => {
+  return currentYear.value === minYear && currentMonth.value === 0;
+});
 
 const loadBudgets = () => {
   const savedBudgets = localStorage.getItem('budgets');
@@ -160,7 +205,6 @@ const loadBudgets = () => {
     }
   }
 
-  // Set default values if not already in localStorage
   predefinedCategories.forEach((category) => {
     if (budgets.value[category.name] === undefined) {
       budgets.value[category.name] = category.defaultValue;
@@ -174,7 +218,10 @@ const saveBudgets = () => {
 
 const calculateTotals = () => {
   const transactions = Array.isArray(transactionData.transactions)
-    ? transactionData.transactions
+    ? transactionData.transactions.filter(transaction => {
+        const [year, month] = transaction.date.split('-').map(Number);
+        return currentMonth.value === month - 1 && currentYear.value === year;
+      })
     : [];
 
   const expenses = transactions.filter((transaction) => !transaction.isIncome);
@@ -187,7 +234,10 @@ const calculateTotals = () => {
 
 const calculateCategoryData = () => {
   const transactions = Array.isArray(transactionData.transactions)
-    ? transactionData.transactions
+    ? transactionData.transactions.filter(transaction => {
+        const [year, month] = transaction.date.split('-').map(Number);
+        return currentMonth.value === month - 1 && currentYear.value === year;
+      })
     : [];
 
   const expenses = transactions.filter((transaction) => !transaction.isIncome);
@@ -226,32 +276,39 @@ const getProgressPercentage = (categoryName) => {
 
 const filteredTransactions = (categoryName) => {
   return transactionData.transactions.filter(
-    (tx) => !tx.isIncome && tx.category === categoryName
+    (tx) => !tx.isIncome && tx.category === categoryName &&
+           parseInt(tx.date.split('-')[1]) === currentMonth.value + 1 && // Check month
+           parseInt(tx.date.split('-')[0]) === currentYear.value // Check year
   );
 };
 
-const openEditDialog = (categoryName) => {
-  currentEditCategory.value = categoryName;
-  tempBudget.value = budgets.value[categoryName] || 0;
-  displayEditDialog.value = true;
+const handleCancelEdit = () => {
+  isEditing.value = false;
+  loadBudgets(); // Reload budgets from localStorage to discard unsaved changes
 };
 
-const saveBudget = () => {
-  budgets.value[currentEditCategory.value] = tempBudget.value;
-  saveBudgets();
-  displayEditDialog.value = false;
-  calculateTotals(); // Recalculate totals after budget update
-
-  toast.add({
-    severity: 'success',
-    summary: 'Budget Updated',
-    detail: `Budget for ${currentEditCategory.value} updated to $${formatNumber(tempBudget.value)}`,
-    life: 3000,
-  });
+const goToPreviousMonth = () => {
+  if (currentMonth.value > 0) {
+    currentMonth.value--;
+  } else if (currentYear.value > minYear) {
+    currentMonth.value = 11;
+    currentYear.value--;
+  }
 };
 
-const cancelEdit = () => {
-  displayEditDialog.value = false;
+const goToNextMonth = () => {
+  if (currentMonth.value < 11) {
+    currentMonth.value++;
+  } else {
+    currentMonth.value = 0;
+    currentYear.value++;
+  }
+};
+
+const goToCurrentMonth = () => {
+  const today = new Date();
+  currentMonth.value = today.getMonth();
+  currentYear.value = today.getFullYear();
 };
 
 watch(
@@ -263,6 +320,28 @@ watch(
   { deep: true }
 );
 
+watch(
+  () => [currentMonth.value, currentYear.value],
+  () => {
+    calculateTotals();
+    calculateCategoryData();
+  }
+);
+
+watch(isEditing, (newVal) => {
+  if (!newVal) {
+    saveBudgets();
+    calculateTotals();
+
+    toast.add({
+      severity: 'success',
+      summary: 'Budgets Saved',
+      detail: 'Your budget changes have been saved.',
+      life: 3000,
+    });
+  }
+});
+
 onMounted(() => {
   loadBudgets();
   calculateTotals();
@@ -271,6 +350,28 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Month Selector */
+.budget-page__month-selector {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.budget-page__current-month {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+/* Edit Button */
+.budget-page__edit-button {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 2rem;
+}
+
 /* Page Container */
 .budget-page {
   font-family: "Arial", sans-serif;
@@ -339,6 +440,11 @@ onMounted(() => {
   margin: 0;
 }
 
+/* Category Input */
+.budget-page__category-input {
+  max-width: 120px;
+}
+
 /* Progress Bar */
 .budget-page__progress {
   margin-bottom: 1rem;
@@ -349,7 +455,7 @@ onMounted(() => {
 }
 
 .budget-page__progress-bar--over :deep(.p-progressbar-value) {
-  background-color: #dc3545;
+  background-color: #dc3545; /* Red color for over budget */
 }
 
 .budget-page__progress-labels {
@@ -383,18 +489,6 @@ onMounted(() => {
   color: #dc3545;
 }
 
-/* Edit Dialog */
-.budget-page__dialog-form {
-  margin-bottom: 1.5rem;
-}
-
-.budget-page__dialog-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #495057;
-}
-
 /* Responsive Styles */
 @media (max-width: 768px) {
   .budget-page__summary-panels {
@@ -404,5 +498,10 @@ onMounted(() => {
   .budget-page__categories {
     flex-direction: column;
   }
+}
+.budget-page__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 </style>
