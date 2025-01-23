@@ -110,18 +110,17 @@ jobs:
           slot-name: 'Production'
           package: ./publish
 
-      # 3a) Download and Install SqlPackage.exe
-      - name: Download and Install SqlPackage
-        run: |
-          Invoke-WebRequest -Uri "https://aka.ms/sqlpackage-win" -OutFile "sqlpackage.zip"
-          Expand-Archive -Path "sqlpackage.zip" -DestinationPath "./sqlpackage"
+      # 3a) **Install SqlPackage via Chocolatey**
+      - name: Install SqlPackage via Chocolatey
+        run: choco install sqlpackage -y
         shell: pwsh
 
       # 4) Deploy Database using SqlPackage
       - name: Deploy Database using SqlPackage
         run: |
-          & ".\sqlpackage\SqlPackage.exe" /Action:Publish /SourceFile:"./publish/BudgetApi.Database.dacpac" /TargetConnectionString:"${{ secrets.AZURE_SQL_CONNECTION_STRING }}" /Profile:"./publish/Azure.publish.xml" /p:ScriptDatabaseOptions=True /p:BlockOnPossibleDataLoss=False
+          & "C:\tools\SqlPackage\SqlPackage.exe" /Action:Publish /SourceFile:"./publish/BudgetApi.Database.dacpac" /TargetConnectionString:"${{ secrets.AZURE_SQL_CONNECTION_STRING }}" /Profile:"./publish/Azure.publish.xml" /p:ScriptDatabaseOptions=True /p:BlockOnPossibleDataLoss=False
         shell: pwsh
         env:
           AZURE_SQL_CONNECTION_STRING: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+
     
