@@ -120,7 +120,7 @@ jobs:
       - name: Deploy Database using SqlPackage
         run: |
           sqlpackage /Action:Publish `
-            /SourceFile:"./publish/BudgetApi.Database.dacpac" `
+            /SourceFile:"./publish/BudgetAppDb.dacpac" `
             /TargetConnectionString:"${{ secrets.AZURE_SQL_CONNECTION_STRING }}" `
             /Profile:"./publish/Azure.publish.xml" `
             /p:ScriptDatabaseOptions=True `
