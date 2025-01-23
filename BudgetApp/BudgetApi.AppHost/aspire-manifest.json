@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json.schemastore.org/aspire-8.0.json",
+  "resources": {
+    // The .NET Minimal API for the Budget application
+    "budgetapi": {
+      "type": "project.v0",
+      "path": "../BudgetApi/BudgetApi.csproj",
+      "env": {
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY": "in_memory",
+        "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true",
+        // This sets the ports the API will listen on
+        "HTTP_PORTS": "{budgetapi.bindings.http.targetPort}"
+      },
+      "bindings": {
+        "http": {
+          "scheme": "http",
+          "protocol": "tcp",
+          "transport": "http",
+          "external": true
+        },
+        "https": {
+          "scheme": "https",
+          "protocol": "tcp",
+          "transport": "http",
+          "external": true
+        }
+      }
+    },
+
+    // The Vue frontend for the Budget application
+    "vue": {
+      "type": "dockerfile.v0",
+      // Path to the Dockerfile in your Vue app folder
+      "path": "../BudgetApp.Vue/Dockerfile",
+      "context": "../BudgetApp.Vue",
+      "env": {
+        "NODE_ENV": "development",
+        // These environment variables make the Vue app aware of where the API is
+        "services__budgetapi__http__0": "{budgetapi.bindings.http.url}",
+        "services__budgetapi__https__0": "{budgetapi.bindings.https.url}",
+        // The port your Vue dev server runs on
+        "PORT": "{vue.bindings.http.targetPort}"
+      },
+      "bindings": {
+        "http": {
+          "scheme": "http",
+          "protocol": "tcp",
+          "transport": "http",
+          "targetPort": 8002,
+          "external":

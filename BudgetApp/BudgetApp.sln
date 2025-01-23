@@ -9,6 +9,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetApi.Tests", "BudgetAp
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "BudgetDb", "BudgetDb\BudgetDb.sqlproj", "{2D27CD38-BCC8-44D4-A01D-CB02925D747E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetApp.AppHost", "BudgetApi.AppHost\BudgetApp.AppHost.csproj", "{38462394-3BD9-49D2-996E-639F5AE7BEAB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B51D11EC-6CDD-4F35-BF0D-7A1D71FC065F} = {B51D11EC-6CDD-4F35-BF0D-7A1D71FC065F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetApp.ServiceDefaults", "BudgetApp.ServiceDefaults\BudgetApp.ServiceDefaults.csproj", "{FA49A908-2D36-431C-ADEC-348C6B991703}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +36,14 @@ Global
 		{2D27CD38-BCC8-44D4-A01D-CB02925D747E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D27CD38-BCC8-44D4-A01D-CB02925D747E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2D27CD38-BCC8-44D4-A01D-CB02925D747E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{38462394-3BD9-49D2-996E-639F5AE7BEAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38462394-3BD9-49D2-996E-639F5AE7BEAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38462394-3BD9-49D2-996E-639F5AE7BEAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38462394-3BD9-49D2-996E-639F5AE7BEAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA49A908-2D36-431C-ADEC-348C6B991703}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA49A908-2D36-431C-ADEC-348C6B991703}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA49A908-2D36-431C-ADEC-348C6B991703}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA49A908-2D36-431C-ADEC-348C6B991703}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

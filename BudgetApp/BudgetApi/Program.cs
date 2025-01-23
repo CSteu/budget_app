@@ -11,7 +11,9 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure Kestrel to listen on ports 5000 and 5001
+//add this
+builder.AddServiceDefaults();
+
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.ListenAnyIP(5000);
@@ -21,7 +23,6 @@ builder.WebHost.ConfigureKestrel(options =>
     });
 });
 
-// Add services to the container
 builder.Services.AddDbContext<BudgetAuthDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -79,9 +80,11 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+//and this
+app.MapDefaultEndpoints();
+
 app.MapIdentityApi<IdentityUser>();
 
-// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -95,7 +98,6 @@ else
 
 app.UseHttpsRedirection();
 
-// Serve static files from wwwroot
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -105,7 +107,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Fallback to index.html for SPA routes
 app.MapFallbackToFile("index.html");
 
 app.Run();

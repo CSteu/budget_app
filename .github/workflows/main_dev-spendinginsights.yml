@@ -22,11 +22,11 @@ jobs:
 
       # 3) Install & Build Vue
       - name: Install NPM dependencies (Vue)
-        working-directory: budget-app
+        working-directory: .\BudgetApp\BudgetApp.Vue
         run: npm install
 
       - name: Build Vue
-        working-directory: budget-app
+        working-directory: .\BudgetApp\BudgetApp.Vue
         run: npm run build
         # If vue.config.js -> outputDir: ../BudgetApi/wwwroot
         # then your compiled Vue files go into BudgetApi/wwwroot.
@@ -39,21 +39,21 @@ jobs:
 
       # 5) Restore NuGet packages
       - name: Restore .NET
-        run: dotnet restore .\BudgetApi\BudgetApi\BudgetApi.csproj
+        run: dotnet restore .\BudgetApp\BudgetApi\BudgetApi.csproj
 
       # 6) Run Tests
       - name: Run Unit Tests
-        run: dotnet test .\BudgetApi\BudgetApi.Tests\BudgetApi.Tests.csproj --configuration Release
+        run: dotnet test .\BudgetApp\BudgetApi.Tests\BudgetApi.Tests.csproj --configuration Release
         env:
           DOTNET_CLI_HOME: ${{ runner.temp }}
 
       # 7) Build .NET
       - name: Build .NET project
-        run: dotnet build .\BudgetApi\BudgetApi\BudgetApi.csproj --configuration Release
+        run: dotnet build .\BudgetApp\BudgetApi\BudgetApi.csproj --configuration Release
 
       # 8) Publish .NET
       - name: Publish .NET project
-        run: dotnet publish .\BudgetApi\BudgetApi\BudgetApi.csproj --configuration Release --output .\publish
+        run: dotnet publish .\BudgetApp\BudgetApi\BudgetApi.csproj --configuration Release --output .\publish
 
       # 9) Upload artifact
       - name: Upload artifact for deployment job
