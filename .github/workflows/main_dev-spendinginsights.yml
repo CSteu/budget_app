@@ -51,6 +51,9 @@ jobs:
       - name: Build .NET API project
         run: dotnet build .\BudgetApp\BudgetApi\BudgetApi.csproj --configuration Release
 
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2.0.0
+
       # 8) Build Database Project
       - name: Build Database Project
         run: |
