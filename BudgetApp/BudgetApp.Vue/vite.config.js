@@ -18,7 +18,7 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: path.resolve(__dirname, '../BudgetApi/BudgetApi/wwwroot'),
+    outDir: path.resolve(__dirname, '../BudgetApi/wwwroot'),
     emptyOutDir: true, 
   },
   resolve: {
