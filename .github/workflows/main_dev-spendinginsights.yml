@@ -57,7 +57,7 @@ jobs:
       # 8) Build Database Project
       - name: Build Database Project
         run: |
-          msbuild .\BudgetApp\BudgetApi.Database\BudgetAppDb.sqlproj /p:Configuration=Debug /p:OutputPath=..\BudgetApi\bin\Debug\ /p:OutDir=..\BudgetApi\bin\Debug\
+          msbuild .\BudgetApp\BudgetAppDb\BudgetAppDb.sqlproj /p:Configuration=Debug /p:OutputPath=..\BudgetApi\bin\Debug\ /p:OutDir=..\BudgetApi\bin\Debug\
           
       # 9) Publish .NET
       - name: Publish .NET project
@@ -66,8 +66,8 @@ jobs:
       # 10) Copy .dacpac and publish profile to publish directory
       - name: Copy .dacpac and publish profile
         run: |
-          Copy-Item -Path .\BudgetApp\BudgetApi\bin\Debug\BudgetApi.Database.dacpac -Destination .\publish\
-          Copy-Item -Path .\BudgetApp\BudgetApi.Database\Azure.publish.xml -Destination .\publish\
+          Copy-Item -Path .\BudgetApp\BudgetApi\bin\Debug\BudgetAppDb.dacpac -Destination .\publish\
+          Copy-Item -Path .\BudgetApp\BudgetAppDb\Azure.publish.xml -Destination .\publish\
 
       # 11) Upload artifact
       - name: Upload artifact for deployment job
