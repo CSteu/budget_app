@@ -113,6 +113,6 @@ jobs:
       # 4) Deploy Database using SqlPackage
       - name: Deploy Database using SqlPackage
         run: |
-          "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\160\SqlPackage.exe" /Action:Publish /SourceFile:"./publish/BudgetApi.Database.dacpac" /TargetConnectionString:"${{ secrets.AZURE_SQL_CONNECTION_STRING }}" /Profile:"./publish/Azure.publish.xml" /p:ScriptDatabaseOptions=True /p:BlockOnPossibleDataLoss=False
+          & "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\160\SqlPackage.exe" /Action:Publish /SourceFile:"./publish/BudgetApi.Database.dacpac" /TargetConnectionString:"${{ secrets.AZURE_SQL_CONNECTION_STRING }}" /Profile:"./publish/Azure.publish.xml" /p:ScriptDatabaseOptions=True /p:BlockOnPossibleDataLoss=False
         env:
           AZURE_SQL_CONNECTION_STRING: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
