@@ -39,7 +39,6 @@ export async function loadCheckingData() {
   checkingData.CheckingAmount = await loadCheckingFromAPI();
 }
 
-// Combined Transaction Data (Income + Spending)
 export const transactionData = reactive({
   transactions: [],
 });
@@ -117,8 +116,6 @@ export async function deleteTransaction(transactionId) {
 
 // Refresh All Data
 export async function refreshData() {
-  await loadSavingsData();
-  await loadCheckingData();
   await loadTransactionData();
   await loadTransferData();
 }

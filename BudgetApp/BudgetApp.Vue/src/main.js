@@ -4,6 +4,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import PrimeVue from 'primevue/config';
+import './telemetry/telemetry.js';
 
 // PrimeVue styles
 import Aura from '@primevue/themes/aura';

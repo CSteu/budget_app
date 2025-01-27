@@ -2,6 +2,8 @@ using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+var otelCollector = builder.AddOpenTelemetryCollector("otelCollector");
+
 var budgetApi = builder.AddProject<Projects.BudgetApi>("budgetapi")
 	.WithExternalHttpEndpoints();
 

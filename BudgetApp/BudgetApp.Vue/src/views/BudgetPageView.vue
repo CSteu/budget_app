@@ -38,14 +38,27 @@ onMounted(() => {
 
 <style scoped>
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0; 
+  height: var(--header-height); 
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
-  background: linear-gradient(90deg, #03045e, #023e8a, #0077b6, #0096c7, #00b4d8);
-  border-radius: 0 0 16px 16px;
+  padding: 1rem 3rem; 
+  background: linear-gradient(
+    90deg,
+    #03045e,
+    #023e8a,
+    #0077b6,
+    #0096c7,
+    #00b4d8
+  );
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  min-width: 72rem;
+  z-index: 1000;
+  width: 100%; 
+  box-sizing: border-box; 
 }
 
 .header-title {
@@ -97,7 +110,6 @@ onMounted(() => {
 
 .wrapper {
   display: flex;
-  width: 75vw;
-  justify-content: center;
+  padding-top: 5rem;
 }
 </style>

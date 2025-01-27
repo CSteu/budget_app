@@ -17,7 +17,7 @@ namespace BudgetApi.Models
         public string Description { get; set; } = string.Empty;
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
-        public string Category { get; set; } = string.Empty;
+        public string Category { get; set; }
         public bool IsIncome { get; set; }
         public string Type { get; set; } = string.Empty;
         [JsonIgnore]

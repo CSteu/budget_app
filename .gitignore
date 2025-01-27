@@ -84,11 +84,23 @@ yarn-error.log*
 # Logs and databases
 *.log
 *.ldb
+*.sqlite
+*.sqlite3
+*.mdf
+*.ldf
 
 # Configuration files
 appsettings.Development.json
 appsettings.Local.json
 appsettings.Test.json
+
+# Entity Framework and SQL Server-related files
+**/*.mdf
+**/*.ldf
+**/Database/*.bak
+**/Database/*.sqlproj
+**/Database/bin/
+**/Database/obj/
 
 # Windows specific
 Thumbs.db

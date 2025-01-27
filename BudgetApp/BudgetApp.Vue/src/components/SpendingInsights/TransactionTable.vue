@@ -229,27 +229,17 @@ export default {
     },
     async saveTransaction() {
       try {
-        const updated = await updateTransaction(this.editTransaction);
-        this.mergeUpdatedTransaction(updated);
+        await updateTransaction(this.editTransaction);
         this.closeEditDialog();
         await this.refreshDataFromApi();
       } catch (error) {
         console.error("Error saving transaction:", error);
       }
     },
-    mergeUpdatedTransaction(updated) {
-      const index = this.transactions.findIndex((t) => t.id === updated.id);
-      if (index !== -1) {
-        this.transactions.splice(index, 1, updated);
-      }
-    },
     async deleteTransactionHandler(transactionId) {
       try {
         await deleteTransaction(transactionId);
-        this.transactionData.transactions = this.transactionData.transactions.filter(
-          (t) => t.id !== transactionId
-        );
-        this.updateFilteredTransactions();
+        await this.refreshDataFromApi();
       } catch (error) {
         console.error("Error deleting transaction:", error);
       }

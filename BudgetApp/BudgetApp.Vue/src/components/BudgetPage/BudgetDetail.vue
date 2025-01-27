@@ -42,6 +42,7 @@
         />
       </div>
     </div>
+
     <div class="budget-page__summary-panels">
       <Card class="budget-page__summary-panel">
         <template #title>
@@ -78,7 +79,11 @@
     </div>
 
     <div class="budget-page__categories">
-      <Card v-for="category in budgetCategories" :key="category.name" class="budget-page__category">
+      <Card
+        v-for="category in budgetCategories"
+        :key="category.name"
+        class="budget-page__category"
+      >
         <template #header>
           <div class="budget-page__category-header">
             <h3 class="budget-page__category-title">{{ category.name }}</h3>
@@ -112,12 +117,41 @@
             </div>
           </div>
 
-          <div class="budget-page__transactions">
-            <DataTable :value="filteredTransactions(category.name)" :rows="5" responsiveLayout="scroll">
-              <Column field="description" header="Description" class="budget-page__transactions-description" />
-              <Column field="amount" header="Amount" class="budget-page__transactions-amount">
+          <!-- Toggle Button for Transactions -->
+          <Button
+            class="p-button-text budget-page__toggle-button"
+            :icon="showTransactions[category.name] ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"
+            label="Transactions"
+            @click="toggleTransactions(category.name)"
+          />
+
+          <!-- Collapsible Transactions Table -->
+          <div
+            v-show="showTransactions[category.name]"
+            class="budget-page__transactions-dropdown"
+          >
+            <DataTable
+              :value="filteredTransactions(category.name)"
+              :rows="5"
+              responsiveLayout="scroll"
+            >
+              <Column
+                field="description"
+                header="Description"
+                class="budget-page__transactions-description"
+              />
+              <Column
+                field="amount"
+                header="Amount"
+                class="budget-page__transactions-amount"
+              >
                 <template #body="slotProps">
-                  <span :class="{ 'budget-page__transactions-amount--expense': !slotProps.data.isIncome }">
+                  <span
+                    :class="{
+                      'budget-page__transactions-amount--expense':
+                        !slotProps.data.isIncome,
+                    }"
+                  >
                     ${{ formatNumber(slotProps.data.amount) }}
                   </span>
                 </template>
@@ -135,7 +169,6 @@ import { inject, ref, reactive, watch, onMounted, computed } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
-import Dialog from 'primevue/dialog';
 import ProgressBar from 'primevue/progressbar';
 import InputNumber from 'primevue/inputnumber';
 import DataTable from 'primevue/datatable';
@@ -166,12 +199,19 @@ const totalEarnings = ref(0);
 const totalBudgeted = ref(0);
 const isEditing = ref(false);
 
+/**
+ * Track if the transaction list is shown or hidden for each category.
+ * e.g., showTransactions["Food"] = true/false
+ */
+const showTransactions = reactive({});
+
 const currentDate = new Date();
 const currentMonth = ref(currentDate.getMonth());
 const currentYear = ref(currentDate.getFullYear());
 
 const currentMonthYear = computed(() => {
-  const monthNames = ["January", "February", "March", "April", "May", "June",
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
   return `${monthNames[currentMonth.value]} ${currentYear.value}`;
@@ -179,7 +219,10 @@ const currentMonthYear = computed(() => {
 
 const isCurrentMonth = computed(() => {
   const today = new Date();
-  return currentMonth.value === today.getMonth() && currentYear.value === today.getFullYear();
+  return (
+    currentMonth.value === today.getMonth() &&
+    currentYear.value === today.getFullYear()
+  );
 });
 
 const minYear = 2000;
@@ -188,6 +231,7 @@ const isPastMonth = computed(() => {
   return currentYear.value === minYear && currentMonth.value === 0;
 });
 
+/** Load budgets from local storage or set defaults. */
 const loadBudgets = () => {
   const savedBudgets = localStorage.getItem('budgets');
   if (savedBudgets) {
@@ -199,42 +243,48 @@ const loadBudgets = () => {
     }
   }
 
-  predefinedCategories.forEach((category) => {
+  predefinedCategories.forEach(category => {
     if (budgets.value[category.name] === undefined) {
       budgets.value[category.name] = category.defaultValue;
     }
   });
 };
 
+/** Save budgets to local storage. */
 const saveBudgets = () => {
   localStorage.setItem('budgets', JSON.stringify(budgets.value));
 };
 
+/** Update total spending, earnings, and budgeted values based on the current month/year. */
 const calculateTotals = () => {
   const transactions = Array.isArray(transactionData.transactions)
     ? transactionData.transactions.filter(transaction => {
         const [year, month] = transaction.date.split('-').map(Number);
-        return currentMonth.value === month - 1 && currentYear.value === year;
+        return currentMonth.value === (month - 1) && currentYear.value === year;
       })
     : [];
 
-  const expenses = transactions.filter((transaction) => !transaction.isIncome);
-  const incomes = transactions.filter((transaction) => transaction.isIncome);
+  const expenses = transactions.filter(t => !t.isIncome);
+  const incomes = transactions.filter(t => t.isIncome);
 
-  totalSpending.value = expenses.reduce((acc, expense) => acc + expense.amount, 0);
-  totalEarnings.value = incomes.reduce((acc, income) => acc + income.amount, 0);
-  totalBudgeted.value = Object.values(budgets.value).reduce((acc, budget) => acc + budget, 0);
+  totalSpending.value = expenses.reduce((acc, e) => acc + e.amount, 0);
+  totalEarnings.value = incomes.reduce((acc, i) => acc + i.amount, 0);
+  totalBudgeted.value = Object.values(budgets.value).reduce(
+    (acc, budget) => acc + budget,
+    0
+  );
 };
 
+/** Calculate how much is spent per category in the current month/year. */
 const calculateCategoryData = () => {
   const transactions = Array.isArray(transactionData.transactions)
     ? transactionData.transactions.filter(transaction => {
         const [year, month] = transaction.date.split('-').map(Number);
-        return currentMonth.value === month - 1 && currentYear.value === year;
+        return currentMonth.value === (month - 1) && currentYear.value === year;
       })
     : [];
 
-  const expenses = transactions.filter((transaction) => !transaction.isIncome);
+  const expenses = transactions.filter(transaction => !transaction.isIncome);
 
   const categoryStats = expenses.reduce((acc, expense) => {
     if (!acc[expense.category]) {
@@ -245,42 +295,56 @@ const calculateCategoryData = () => {
     return acc;
   }, {});
 
-  budgetCategories.value = predefinedCategories.map((category) => ({
+  budgetCategories.value = predefinedCategories.map(category => ({
     name: category.value,
     transactionCount: categoryStats[category.value]?.transactionCount || 0,
     totalSpent: categoryStats[category.value]?.totalSpent || 0,
   }));
 };
 
+/** Helper to format numbers as USD. */
 const formatNumber = (num) => {
-  return new Intl.NumberFormat('en-US').format(num?.toFixed(2));
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(num || 0);
 };
 
+/** Check if a category is over budget. */
 const isOverBudget = (categoryName) => {
   const category = budgetCategories.value.find(c => c.name === categoryName);
   const target = budgets.value[categoryName] || 0;
   return category && target > 0 && category.totalSpent > target;
 };
 
+/** Return progress percentage for progress bars. */
 const getProgressPercentage = (categoryName) => {
   const category = budgetCategories.value.find(c => c.name === categoryName);
   const target = budgets.value[categoryName] || 0;
-  return category && target > 0 ? Math.min((category.totalSpent / target) * 100, 100) : 0;
+  if (category && target > 0) {
+    return Math.min((category.totalSpent / target) * 100, 100);
+  }
+  return 0;
 };
 
+/** Filter transactions for a specific category and current month/year. */
 const filteredTransactions = (categoryName) => {
-  return transactionData.transactions.filter(
-    (tx) => !tx.isIncome && tx.category === categoryName &&
-           parseInt(tx.date.split('-')[1]) === currentMonth.value + 1 && // Check month
-           parseInt(tx.date.split('-')[0]) === currentYear.value // Check year
+  return (transactionData.transactions || []).filter(
+    (tx) =>
+      !tx.isIncome &&
+      tx.category === categoryName &&
+      parseInt(tx.date.split('-')[1]) === currentMonth.value + 1 &&
+      parseInt(tx.date.split('-')[0]) === currentYear.value
   );
 };
 
+/** Cancel editing budgets. */
 const handleCancelEdit = () => {
   isEditing.value = false;
-  loadBudgets(); // Reload budgets from localStorage to discard unsaved changes
+  loadBudgets(); // Reload from localStorage to discard unsaved changes
 };
 
+/** Navigation: Go to previous month. */
 const goToPreviousMonth = () => {
   if (currentMonth.value > 0) {
     currentMonth.value--;
@@ -290,22 +354,31 @@ const goToPreviousMonth = () => {
   }
 };
 
+/** Navigation: Go to next month (if not the current month). */
 const goToNextMonth = () => {
   const today = new Date();
-    if (currentMonth.value < today.getMonth() || currentYear.value < today.getFullYear()) {
-      if (currentMonth.value < 11) {
-        currentMonth.value++;
-      } else {
-        currentMonth.value = 0;
-        currentYear.value++;
-      }
+  if (currentYear.value < today.getFullYear() ||
+      (currentYear.value === today.getFullYear() && currentMonth.value < today.getMonth())
+  ) {
+    if (currentMonth.value < 11) {
+      currentMonth.value++;
+    } else {
+      currentMonth.value = 0;
+      currentYear.value++;
     }
+  }
 };
 
+/** Navigation: Jump to the current month/year. */
 const goToCurrentMonth = () => {
   const today = new Date();
   currentMonth.value = today.getMonth();
   currentYear.value = today.getFullYear();
+};
+
+/** Toggle the display of transactions for a given category. */
+const toggleTransactions = (categoryName) => {
+  showTransactions[categoryName] = !showTransactions[categoryName];
 };
 
 watch(
@@ -343,6 +416,11 @@ onMounted(() => {
   loadBudgets();
   calculateTotals();
   calculateCategoryData();
+
+  // Initialize showTransactions to false for all categories
+  predefinedCategories.forEach(category => {
+    showTransactions[category.value] = false;
+  });
 });
 </script>
 
@@ -378,6 +456,12 @@ onMounted(() => {
   background-color: #f8f9fa;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.budget-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* Summary Panels */
@@ -429,6 +513,7 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0.5rem 1rem;
 }
 
 .budget-page__category-title {
@@ -466,11 +551,12 @@ onMounted(() => {
   color: #6c757d;
 }
 
-/* Transactions Table */
-.budget-page__transactions {
-  margin-top: 1.5rem;
+/* Transactions Collapsible Section */
+.budget-page__transactions-dropdown {
+  margin-top: 1rem;
 }
 
+/* Transactions Table */
 .budget-page__transactions-description {
   font-size: 0.875rem;
   color: #495057;
@@ -495,10 +581,5 @@ onMounted(() => {
   .budget-page__categories {
     flex-direction: column;
   }
-}
-.budget-page__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 </style>

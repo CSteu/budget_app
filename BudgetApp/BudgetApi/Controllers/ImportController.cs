@@ -3,6 +3,7 @@ using BudgetApi.Data;
 using BudgetApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BudgetApi.Controllers
 {
@@ -33,7 +34,10 @@ namespace BudgetApi.Controllers
 				return Unauthorized("User is not authenticated.");
 			}
 
+
 			var newlyInserted = new List<Transaction>();
+
+			var categoryCache = await GetCategoryCacheAsync(userId);
 
 			foreach (var transaction in transactions)
 			{
@@ -52,7 +56,14 @@ namespace BudgetApi.Controllers
 						transaction.IsIncome = true;
 						transaction.Category = "Income";
 					}
-
+					else
+					{
+						if (string.IsNullOrEmpty(transaction.Category) &&
+							categoryCache.ContainsKey(transaction.Description))
+						{
+							transaction.Category = categoryCache[transaction.Description];
+						}
+					}
 					_context.Transactions.Add(transaction);
 					newlyInserted.Add(transaction);
 				}
@@ -60,6 +71,15 @@ namespace BudgetApi.Controllers
 
 			await _context.SaveChangesAsync();
 			return Ok(newlyInserted);
+		}
+
+		private async Task<Dictionary<string, string>> GetCategoryCacheAsync(string userId)
+		{
+			return await _context.Transactions
+				.Where(t => t.UserId == userId && !string.IsNullOrEmpty(t.Category))
+				.GroupBy(t => t.Description)
+				.Select(g => new { Description = g.Key, Category = g.Max(x => x.Category) })
+				.ToDictionaryAsync(x => x.Description, x => x.Category);
 		}
 
 	}

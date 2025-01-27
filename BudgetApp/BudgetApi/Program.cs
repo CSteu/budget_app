@@ -14,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 //add this
 builder.AddServiceDefaults();
 
+builder.Services.AddMemoryCache();
+
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.ListenAnyIP(5000);
