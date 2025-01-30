@@ -15,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 builder.Services.AddMemoryCache();
+builder.Services.AddResponseCaching();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
@@ -106,6 +107,8 @@ app.UseRouting();
 app.UseCors("AllowAll");
 
 app.UseAuthorization();
+
+app.UseResponseCaching();
 
 app.MapControllers();
 

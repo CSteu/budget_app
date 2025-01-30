@@ -117,7 +117,6 @@ export async function deleteTransaction(transactionId) {
 // Refresh All Data
 export async function refreshData() {
   await loadTransactionData();
-  await loadTransferData();
 }
 
 // Initial Load

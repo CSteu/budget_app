@@ -97,10 +97,12 @@ appsettings.Test.json
 # Entity Framework and SQL Server-related files
 **/*.mdf
 **/*.ldf
-**/Database/*.bak
-**/Database/*.sqlproj
-**/Database/bin/
-**/Database/obj/
+**/BudgetAppDb/*.bak
+**/BudgetAppDb/*.sqlproj
+**/BudgetAppDb/bin/
+**/BudgetAppDb/obj/
+**/*.jfm
+**/*.dbmdl
 
 # Windows specific
 Thumbs.db
